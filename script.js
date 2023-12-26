@@ -247,26 +247,94 @@ const renderCountry = function (data, className = '') {
 // Promises and the Fetch API
 //////////////////////////////////////////////////////////////////
 
-//SEE PDF LECTURE AND VIDEO
+// //SEE PDF LECTURE AND VIDEO
 
-// const request = new XMLHttpRequest();
-// request.open(
-//   'GET',
-//   `https://countries-api-836d.onrender.com/countries/name/${country}`
+// // const request = new XMLHttpRequest();
+// // request.open(
+// //   'GET',
+// //   `https://countries-api-836d.onrender.com/countries/name/${country}`
+// // );
+// // request.send();
+
+// // Now there are actually some more options
+// // that we can specify here
+// // in the fetch function, if we'd like,
+// // but to make a simple get request like this one,
+// // all we really need is to pass in the URL
+// // and that's it.
+// // So for more complex AJAX calls,
+// // the fetch function can take in like an object
+// // of options as well
+// // But again, for now, we don't need that.
+// const request = fetch(
+//   'https://countries-api-836d.onrender.com/countries/name/portugal'
 // );
-// request.send();
+// console.log(request);
 
-// Now there are actually some more options
-// that we can specify here
-// in the fetch function, if we'd like,
-// but to make a simple get request like this one,
-// all we really need is to pass in the URL
-// and that's it.
-// So for more complex AJAX calls,
-// the fetch function can take in like an object
-// of options as well
-// But again, for now, we don't need that.
-const request = fetch(
-  'https://countries-api-836d.onrender.com/countries/name/portugal'
-);
-console.log(request);
+////////////////////////////////////////////////////////////////////
+// Consuming Promises
+////////////////////////////////////////////////////////////////////
+// const getCountryData = function (country) {
+//   fetch(`https://countries-api-836d.onrender.com/countries/name/${country}`)
+//     .then(function (response) {
+//       console.log(response);
+
+//       //     So again, the json method here
+//       // is a method that is available
+//       // on all the response objects that is coming
+//       // from the fetch function,
+//       // so all of the resolved values,
+//       //     And so therefore it does have
+//       // the json method attached to it.
+
+//       // Now, the problem here is
+//       // that this json function itself,
+//       // is actually also an asynchronous function.
+//       // And so what that means,
+//       // is that it will also return a new promise.
+//       // And that's all a bit confusing
+//       // and I really don't know why it was implemented like this,
+//       // but this is just how it works.
+//       // So anyway, what we need to do now here
+//       // is to actually return this promise from here.
+//       // Okay, because remember this here will be a new promise.
+
+//       return response.json();
+//     })
+//     .then(function (data) {
+//       console.log(data);
+//       renderCountry(data[0]);
+//     });
+// };
+
+// // So let's recap what happened here.
+// // And the first part here I think, is pretty straight forward
+// // which is this fetch function here returning a promise.
+// // And then we handled that promise
+// // using the then method, right.
+// // But then to actually read the data from the response,
+// // we need to call the json method on that response object.
+// // Now this itself will also return a promise.
+// // And so if we then return that promise from this method
+// // then basically all of this becomes a new promise itself.
+// // And so since this is a promise
+// // we can then again, call the then method on that.
+// // And so then again we have a callback
+// // and this time, we get access to the data
+// // because the resolved value of this promise here
+// // is going to be the data itself.
+// // So basically the data that we're looking for,
+// // which is then this one here, right.
+
+// ====///////
+// we can create a highly simplified version as well.
+const getCountryData = function (country) {
+  fetch(`https://countries-api-836d.onrender.com/countries/name/${country}`)
+    .then(response => response.json())
+    .then(data => renderCountry(data[0]));
+};
+
+getCountryData('usa');
+
+// So promises do not get rid of callbacks,
+// but they do in fact get rid of callback hell.
