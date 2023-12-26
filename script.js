@@ -274,67 +274,190 @@ const renderCountry = function (data, className = '') {
 ////////////////////////////////////////////////////////////////////
 // Consuming Promises
 ////////////////////////////////////////////////////////////////////
+// // const getCountryData = function (country) {
+// //   fetch(`https://countries-api-836d.onrender.com/countries/name/${country}`)
+// //     .then(function (response) {
+// //       console.log(response);
+
+// //       //     So again, the json method here
+// //       // is a method that is available
+// //       // on all the response objects that is coming
+// //       // from the fetch function,
+// //       // so all of the resolved values,
+// //       //     And so therefore it does have
+// //       // the json method attached to it.
+
+// //       // Now, the problem here is
+// //       // that this json function itself,
+// //       // is actually also an asynchronous function.
+// //       // And so what that means,
+// //       // is that it will also return a new promise.
+// //       // And that's all a bit confusing
+// //       // and I really don't know why it was implemented like this,
+// //       // but this is just how it works.
+// //       // So anyway, what we need to do now here
+// //       // is to actually return this promise from here.
+// //       // Okay, because remember this here will be a new promise.
+
+// //       return response.json();
+// //     })
+// //     .then(function (data) {
+// //       console.log(data);
+// //       renderCountry(data[0]);
+// //     });
+// // };
+
+// // // So let's recap what happened here.
+// // // And the first part here I think, is pretty straight forward
+// // // which is this fetch function here returning a promise.
+// // // And then we handled that promise
+// // // using the then method, right.
+// // // But then to actually read the data from the response,
+// // // we need to call the json method on that response object.
+// // // Now this itself will also return a promise.
+// // // And so if we then return that promise from this method
+// // // then basically all of this becomes a new promise itself.
+// // // And so since this is a promise
+// // // we can then again, call the then method on that.
+// // // And so then again we have a callback
+// // // and this time, we get access to the data
+// // // because the resolved value of this promise here
+// // // is going to be the data itself.
+// // // So basically the data that we're looking for,
+// // // which is then this one here, right.
+
+// // ====///////
+// // we can create a highly simplified version as well.
 // const getCountryData = function (country) {
 //   fetch(`https://countries-api-836d.onrender.com/countries/name/${country}`)
-//     .then(function (response) {
-//       console.log(response);
-
-//       //     So again, the json method here
-//       // is a method that is available
-//       // on all the response objects that is coming
-//       // from the fetch function,
-//       // so all of the resolved values,
-//       //     And so therefore it does have
-//       // the json method attached to it.
-
-//       // Now, the problem here is
-//       // that this json function itself,
-//       // is actually also an asynchronous function.
-//       // And so what that means,
-//       // is that it will also return a new promise.
-//       // And that's all a bit confusing
-//       // and I really don't know why it was implemented like this,
-//       // but this is just how it works.
-//       // So anyway, what we need to do now here
-//       // is to actually return this promise from here.
-//       // Okay, because remember this here will be a new promise.
-
-//       return response.json();
-//     })
-//     .then(function (data) {
-//       console.log(data);
-//       renderCountry(data[0]);
-//     });
+//     .then(response => response.json())
+//     .then(data => renderCountry(data[0]));
 // };
 
-// // So let's recap what happened here.
-// // And the first part here I think, is pretty straight forward
-// // which is this fetch function here returning a promise.
-// // And then we handled that promise
-// // using the then method, right.
-// // But then to actually read the data from the response,
-// // we need to call the json method on that response object.
-// // Now this itself will also return a promise.
-// // And so if we then return that promise from this method
-// // then basically all of this becomes a new promise itself.
-// // And so since this is a promise
-// // we can then again, call the then method on that.
-// // And so then again we have a callback
-// // and this time, we get access to the data
-// // because the resolved value of this promise here
-// // is going to be the data itself.
-// // So basically the data that we're looking for,
-// // which is then this one here, right.
+// getCountryData('usa');
 
-// ====///////
-// we can create a highly simplified version as well.
+// // So promises do not get rid of callbacks,
+// // but they do in fact get rid of callback hell.
+
+//////////////////////////////////////////////////////////////////
+// Chaining Promises
+//////////////////////////////////////////////////////////////////
 const getCountryData = function (country) {
+  // Country 1
   fetch(`https://countries-api-836d.onrender.com/countries/name/${country}`)
     .then(response => response.json())
-    .then(data => renderCountry(data[0]));
+    .then(data => {
+      renderCountry(data[0]);
+
+      //       And so again,
+      // the second Ajax call depends on the data
+      // from the first call.
+      // And so they need to be done in sequence.
+      // to happen here in
+      // this then handler.
+      // So as soon as we get the data,
+      // then we need to get the neighbor country
+      // and do the Ajax call for that one as well.
+      const neighbour = data[0].borders[0];
+
+      if (!neighbour) return;
+
+      // Country 2
+      return fetch(
+        `https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`
+      );
+
+      // so by returning this promise here,
+      // then the fulfilled value
+      // of the next then method will be fulfilled value of
+      // this previous promise.
+    })
+    .then(response => response.json())
+    .then(data => renderCountry(data, 'neighbour'));
 };
 
-getCountryData('usa');
+// getCountryData('usa');
+getCountryData('germany');
 
-// So promises do not get rid of callbacks,
-// but they do in fact get rid of callback hell.
+// So right now we have four steps here, even,
+// but of course we could extend this as much
+// as we want.
+// So even if we wanted the neighbor of the neighbor
+// of the neighbor,
+// like 10 countries,
+// we could easily do this by chaining all these promises
+// one after another and all
+// without the callback hell.
+
+// So here, instead of the callback,
+// hell we have what we call a flat chain of promises.
+// And this one is again,
+// very easy to understand and to read.
+
+// So as a conclusion to this video and the previous one,
+// promises really,
+// are an incredibly powerful and elegant solution
+// to handle asynchronous code.
+
+//======
+// Now, just to finish,
+// I want to show you a pretty common mistake
+// that many beginners make,
+// which is to basically chain this then method directly
+// onto a new nested promise.
+// So as we know,
+// this one immediately returns a promise.
+// And so many beginners basically do this instead,
+// let me show it to you here.
+// So instead of returning the new promise,
+// they then chain theme then method right here.
+// So right inside of
+// this then method.
+// Now this actually does still work,
+// but then we are in fact back to callback hell.
+
+// Because now indeed,
+// we have one callback function here
+// defined inside of another one.
+// So inside of this,
+// in closing callback function.
+// Okay.
+// And so of course
+// that's exactly what we're trying to avoid.
+// And so don't do this.
+
+// const getCountryDataSample = function (country) {
+//   // Country 1
+//   fetch(`https://countries-api-836d.onrender.com/countries/name/${country}`)
+//     .then(response => response.json())
+//     .then(data => {
+//       renderCountry(data[0]);
+
+//       const neighbour = data[0].borders[0];
+//       if (!neighbour) return;
+
+//       // Country 2
+//       fetch(
+//         `https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`
+//       ).then(response => response.json())
+//     })
+//     .then(response => response.json())
+//     .then(data => renderCountry(data, 'neighbour'));
+// };
+
+///===
+
+// So always return to promise
+// and then handle it outside by simply continuing
+// the chain like this.
+
+// Alright, but I hope that this
+// was already pretty obvious anyway,
+// from all the explanations that I gave you throughout
+// this lecture and the previous one.
+
+// But anyway,
+// let's now move on and actually handle errors because
+// that is also a pretty common scenario when we work
+// with promises and especially
+// with Ajax calls.
