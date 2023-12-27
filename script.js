@@ -708,3 +708,149 @@ const renderError = function (msg) {
 // Asynchronous Behind the Scenes: The Event Loop
 /////////////////////////////////////////////////////////////////////
 // SEE PDF LECTURE AND VIDEO
+
+///////////////////////////////////////////////////////////////////
+// The Event Loop in Practice
+///////////////////////////////////////////////////////////////////
+
+console.log('Test start');
+setTimeout(() => console.log('0 sec timer'), 0);
+Promise.resolve('Resolved promise 1').then(res => console.log(res));
+
+Promise.resolve('Resolved promise 2').then(res => {
+  for (let i = 0; i < 10000000000; i++) {}
+  console.log(res);
+});
+console.log('Test end');
+
+// So the first two messages that are gonna be printed
+// should be pretty obvious,
+// that's because we already know that any top level of coat.
+// So coat outside of any callback, will run first.
+// And so of course, the first two logs will come
+// from these two synchronous, console dot log Sierra.
+// But now between the timer, and the resolved promise here,
+// it might be a little bit trickier.
+// So both the timer and a promise,
+// will finish at the exact same time.
+// So both right after zero seconds.
+// So the timer,because we told it to finish after zero seconds
+
+// and a promise because we told it to immediately
+// become resolved.
+
+// And so therefore,
+// they will both finish at the exact same time.
+// So which one do you think will be handled first
+// or in other words,
+// which of these two callbacks here will be executed first?
+// Well, the timer appears first in the coat
+// and so it kind of finished first.
+// And so it's callback,
+// will be put on the callback queue first, but does that mean
+// that this call back here will be executed first?
+// Well, actually, no, it doesn't.
+// And that's because of the micro-tasks queue, remember?
+// So the callback of the resolved promise here,
+// so this one will be put on the micro-tasks queue and this
+// micro-tasks queue, as you learned in the last video
+// has priority over the callback queue.
+
+// And so after this whole code runs,
+// we will have one callback in a callback queue
+// and one in a micro-tasks queue.
+// And therefore the one from the micro tests queue
+// should be executed first.
+// And so therefore the callback from the micro-tasks queue
+// should be executed first.
+// And so that's this one here and there for the first message
+// to appear of these two, should be resolved Promise one.
+// All right.
+
+// So the order in which they should appear
+// is this tenders, tenders and finally the timer.
+// And so that's now finally confirmed as, so I'm saving it
+// and indeed did as exactly as expected.
+// And so that's a relief actually.
+// So what I told you in the last lecture is actually true.
+// Now we proved it with coat.
+
+// Now, remember that the implication
+// of the fact that micro-tasks have priority
+// over regular callbacks, is that if one of
+// the micro-tasks takes a long time to run,
+// then the timer will actually be delayed and not run after
+// the zero seconds that we specified here, right?
+// So instead it will run a little bit later just after
+// the micro-task is actually done with its work.
+// And so to finish this lecture,
+
+// let's actually simulate what I just said.
+// So here I will create another promise,
+// that will immediately resolve.
+// So let's just say resolved promise two, and then again,
+// we can handle it here.
+// And then as always, we want to log,
+// the result to the console.
+// But before we doing that,
+// we actually want this callback function
+// to have a really heavy task,
+// which should take a lot of time.
+// And so let's simulate that this callback takes a long time
+// to run, by looping over a large number.
+// So we can do the simulation simply,
+// with an old school four loop.
+// So let's start with I at zero and now I will loop
+// all the way until one like very large number.
+// Let's say this, and I will have to experiment a little bit.
+// And for your computer, it might indeed be different.
+// So if your computer is slower,
+// maybe then you want a smaller number
+// and maybe it's faster than mine.
+// And then maybe a smaller number will be enough, right?
+// I'm not sure if I said it correctly.
+// So if your computer is slower than mine,
+// then you will need a larger number, right?
+// And so again, this line of code here will simulate
+// that the callback function takes a long time.
+// So really just this micro-task takes a long time.
+// All right, it is not the asynchronous task itself.
+// So the promise itself will still be resolved immediately,
+// but then the micro-task that it contains,
+// so that it puts on the micro-tasks queue.
+// That's the one that will take a long time.
+// And so by doing that,
+// I can show you that the callbacks in the callback queue,
+// just like this one here, will indeed be delayed
+// and not run after zero seconds.
+// So let's try this now,
+// and you see it took a long time here
+// until this lock appeared, right?
+
+// So maybe we can have even a bigger number.
+// And I hope that my computer is not going to explode,
+// with this one.
+// So you see that the page is kind of loading here
+// and it's taking a lot of time.
+// And so, actually now eventually it finished,
+// but you see, that now only after all this work,
+// the zero second timer message appeared on the screen.
+// And so this is actual proof that these zero seconds
+// that we have here are not a guarantee.
+// Okay.
+
+// And that is exactly what I wanted to show you.
+// So this means, that you cannot really do high precision
+// things using JavaScript timers.
+// So just keep that in mind,
+// whenever you are working with promises.
+// So basically with micro-tasks,
+// and with timers at the same time.
+// Okay.
+
+// Let's just remove the zero here,
+// so that you don't explode your computer,
+// but you still see that the effect is the same.
+// All right, and that's actually enough for this video.
+// I think I proved my point and demonstrated to the things
+// that we just learned in the previous lecture.
