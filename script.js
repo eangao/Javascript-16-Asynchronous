@@ -3,6 +3,31 @@
 const btn = document.querySelector('.btn-country');
 const countriesContainer = document.querySelector('.countries');
 
+const renderCountry = function (data, className = '') {
+  const html = `
+    <article class="country ${className}">
+      <img class="country__img" src="${data.flag}" />
+      <div class="country__data">
+        <h3 class="country__name">${data.name}</h3>
+        <h4 class="country__region">${data.region}</h4>
+        <p class="country__row"><span>👫</span>${(
+          +data.population / 1000000
+        ).toFixed(1)}</p>
+        <p class="country__row"><span>🗣️</span>${data.languages[0].name}</p>
+        <p class="country__row"><span>💰</span>${data.currencies[0].name}</p>
+      </div>
+    </article>
+  `;
+
+  countriesContainer.insertAdjacentHTML('beforeend', html);
+  // countriesContainer.style.opacity = 1;
+};
+
+const renderError = function (msg) {
+  countriesContainer.insertAdjacentText('beforeend', msg);
+  // countriesContainer.style.opacity = 1;
+};
+
 ///////////////////////////////////////
 
 ////////////////////////////////////////////////////////
@@ -110,26 +135,6 @@ const countriesContainer = document.querySelector('.countries');
 //////////////////////////////////////////////////////////////////
 // Welcome to Callback Hell
 //////////////////////////////////////////////////////////////////
-
-const renderCountry = function (data, className = '') {
-  const html = `
-    <article class="country ${className}">
-      <img class="country__img" src="${data.flag}" />
-      <div class="country__data">
-        <h3 class="country__name">${data.name}</h3>
-        <h4 class="country__region">${data.region}</h4>
-        <p class="country__row"><span>👫</span>${(
-          +data.population / 1000000
-        ).toFixed(1)}</p>
-        <p class="country__row"><span>🗣️</span>${data.languages[0].name}</p>
-        <p class="country__row"><span>💰</span>${data.currencies[0].name}</p>
-      </div>
-    </article>
-  `;
-
-  countriesContainer.insertAdjacentHTML('beforeend', html);
-  countriesContainer.style.opacity = 1;
-};
 
 // const getCountryAndNeighbour = function (country) {
 //   // AJAX call country 1
@@ -341,23 +346,142 @@ const renderCountry = function (data, className = '') {
 
 //////////////////////////////////////////////////////////////////
 // Chaining Promises
-//////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////
+// const getCountryData = function (country) {
+//   // Country 1
+//   fetch(`https://countries-api-836d.onrender.com/countries/name/${country}`)
+//     .then(response => response.json())
+//     .then(data => {
+//       renderCountry(data[0]);
+
+//       //       And so again,
+//       // the second Ajax call depends on the data
+//       // from the first call.
+//       // And so they need to be done in sequence.
+//       // to happen here in
+//       // this then handler.
+//       // So as soon as we get the data,
+//       // then we need to get the neighbor country
+//       // and do the Ajax call for that one as well.
+//       const neighbour = data[0].borders[0];
+
+//       if (!neighbour) return;
+
+//       // Country 2
+//       return fetch(
+//         `https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`
+//       );
+
+//       // so by returning this promise here,
+//       // then the fulfilled value
+//       // of the next then method will be fulfilled value of
+//       // this previous promise.
+//     })
+//     .then(response => response.json())
+//     .then(data => renderCountry(data, 'neighbour'));
+// };
+
+// // getCountryData('usa');
+// getCountryData('germany');
+
+// // So right now we have four steps here, even,
+// // but of course we could extend this as much
+// // as we want.
+// // So even if we wanted the neighbor of the neighbor
+// // of the neighbor,
+// // like 10 countries,
+// // we could easily do this by chaining all these promises
+// // one after another and all
+// // without the callback hell.
+
+// // So here, instead of the callback,
+// // hell we have what we call a flat chain of promises.
+// // And this one is again,
+// // very easy to understand and to read.
+
+// // So as a conclusion to this video and the previous one,
+// // promises really,
+// // are an incredibly powerful and elegant solution
+// // to handle asynchronous code.
+
+// //======
+// // Now, just to finish,
+// // I want to show you a pretty common mistake
+// // that many beginners make,
+// // which is to basically chain this then method directly
+// // onto a new nested promise.
+// // So as we know,
+// // this one immediately returns a promise.
+// // And so many beginners basically do this instead,
+// // let me show it to you here.
+// // So instead of returning the new promise,
+// // they then chain theme then method right here.
+// // So right inside of
+// // this then method.
+// // Now this actually does still work,
+// // but then we are in fact back to callback hell.
+
+// // Because now indeed,
+// // we have one callback function here
+// // defined inside of another one.
+// // So inside of this,
+// // in closing callback function.
+// // Okay.
+// // And so of course
+// // that's exactly what we're trying to avoid.
+// // And so don't do this.
+
+// // const getCountryDataSample = function (country) {
+// //   // Country 1
+// //   fetch(`https://countries-api-836d.onrender.com/countries/name/${country}`)
+// //     .then(response => response.json())
+// //     .then(data => {
+// //       renderCountry(data[0]);
+
+// //       const neighbour = data[0].borders[0];
+// //       if (!neighbour) return;
+
+// //       // Country 2
+// //       fetch(
+// //         `https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`
+// //       ).then(response => response.json())
+// //     })
+// //     .then(response => response.json())
+// //     .then(data => renderCountry(data, 'neighbour'));
+// // };
+
+// ///===
+
+// // So always return to promise
+// // and then handle it outside by simply continuing
+// // the chain like this.
+
+// // Alright, but I hope that this
+// // was already pretty obvious anyway,
+// // from all the explanations that I gave you throughout
+// // this lecture and the previous one.
+
+// // But anyway,
+// // let's now move on and actually handle errors because
+// // that is also a pretty common scenario when we work
+// // with promises and especially
+// // with Ajax calls.
+
+///////////////////////////////////////////////////////////////////////
+// Handling Rejected Promises
+///////////////////////////////////////////////////////////////////////
+
+// an important part of web development
+// is to actually handle the errors
+// because it's very common that errors happen
+// in web applications.
+
 const getCountryData = function (country) {
   // Country 1
   fetch(`https://countries-api-836d.onrender.com/countries/name/${country}`)
     .then(response => response.json())
     .then(data => {
       renderCountry(data[0]);
-
-      //       And so again,
-      // the second Ajax call depends on the data
-      // from the first call.
-      // And so they need to be done in sequence.
-      // to happen here in
-      // this then handler.
-      // So as soon as we get the data,
-      // then we need to get the neighbor country
-      // and do the Ajax call for that one as well.
       const neighbour = data[0].borders[0];
 
       if (!neighbour) return;
@@ -366,98 +490,33 @@ const getCountryData = function (country) {
       return fetch(
         `https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`
       );
-
-      // so by returning this promise here,
-      // then the fulfilled value
-      // of the next then method will be fulfilled value of
-      // this previous promise.
     })
     .then(response => response.json())
-    .then(data => renderCountry(data, 'neighbour'));
+    .then(data => renderCountry(data, 'neighbour'))
+
+    //     All right, so again this catch method here
+    // at the end of the chain will basically catch any errors
+    // that occur in any place in this whole promise chain
+    // and no matter where that is.
+    // So errors basically propagate down the chain
+    // until they are caught,
+    .catch(err => {
+      console.error(`${err} 💥💥💥`);
+      renderError(`Something went wrong 💥💥 ${err.message}. Try again!`);
+    })
+
+    //     So besides then and catch there is also the finally method.
+    // So let's add a finally here, finally.
+    // And then the callback function that we defined here
+    // will always be called whatever happens with the promise.
+    // So no matter if the promise is fulfilled or rejected
+    // this callback function that we define here
+    // is gonna be called always.
+    .finally(() => {
+      countriesContainer.style.opacity = 1;
+    });
 };
 
-// getCountryData('usa');
-getCountryData('germany');
-
-// So right now we have four steps here, even,
-// but of course we could extend this as much
-// as we want.
-// So even if we wanted the neighbor of the neighbor
-// of the neighbor,
-// like 10 countries,
-// we could easily do this by chaining all these promises
-// one after another and all
-// without the callback hell.
-
-// So here, instead of the callback,
-// hell we have what we call a flat chain of promises.
-// And this one is again,
-// very easy to understand and to read.
-
-// So as a conclusion to this video and the previous one,
-// promises really,
-// are an incredibly powerful and elegant solution
-// to handle asynchronous code.
-
-//======
-// Now, just to finish,
-// I want to show you a pretty common mistake
-// that many beginners make,
-// which is to basically chain this then method directly
-// onto a new nested promise.
-// So as we know,
-// this one immediately returns a promise.
-// And so many beginners basically do this instead,
-// let me show it to you here.
-// So instead of returning the new promise,
-// they then chain theme then method right here.
-// So right inside of
-// this then method.
-// Now this actually does still work,
-// but then we are in fact back to callback hell.
-
-// Because now indeed,
-// we have one callback function here
-// defined inside of another one.
-// So inside of this,
-// in closing callback function.
-// Okay.
-// And so of course
-// that's exactly what we're trying to avoid.
-// And so don't do this.
-
-// const getCountryDataSample = function (country) {
-//   // Country 1
-//   fetch(`https://countries-api-836d.onrender.com/countries/name/${country}`)
-//     .then(response => response.json())
-//     .then(data => {
-//       renderCountry(data[0]);
-
-//       const neighbour = data[0].borders[0];
-//       if (!neighbour) return;
-
-//       // Country 2
-//       fetch(
-//         `https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`
-//       ).then(response => response.json())
-//     })
-//     .then(response => response.json())
-//     .then(data => renderCountry(data, 'neighbour'));
-// };
-
-///===
-
-// So always return to promise
-// and then handle it outside by simply continuing
-// the chain like this.
-
-// Alright, but I hope that this
-// was already pretty obvious anyway,
-// from all the explanations that I gave you throughout
-// this lecture and the previous one.
-
-// But anyway,
-// let's now move on and actually handle errors because
-// that is also a pretty common scenario when we work
-// with promises and especially
-// with Ajax calls.
+btn.addEventListener('click', function () {
+  getCountryData('usa');
+});
