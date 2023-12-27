@@ -859,150 +859,269 @@ const renderError = function (msg) {
 // Building a Simple Promise
 /////////////////////////////////////////////////////////////
 
-// and we create a new promise using the promise constructor.
-// So that's new promise like this.
-// So just like many other built-in objects.
-// And so what this means is that promises
-// are essentially just a special kind of object in JavaScript.
-// Now the promise constructor takes exactly one argument
-// and that is the so-called executor function.
-// So we need to pass in a function here.
+// // and we create a new promise using the promise constructor.
+// // So that's new promise like this.
+// // So just like many other built-in objects.
+// // And so what this means is that promises
+// // are essentially just a special kind of object in JavaScript.
+// // Now the promise constructor takes exactly one argument
+// // and that is the so-called executor function.
+// // So we need to pass in a function here.
 
-const lotteryPromise = new Promise(function (resolve, reject) {
-  console.log('Lottery draw is happening 🔮');
+// const lotteryPromise = new Promise(function (resolve, reject) {
+//   console.log('Lottery draw is happening 🔮');
 
-  setTimeout(function () {
-    if (Math.random() >= 0.5) {
-      resolve('You WIN 💰');
-    } else {
-      reject(new Error('You lost your money 💩'));
-    }
-  }, 2000);
-});
+//   setTimeout(function () {
+//     if (Math.random() >= 0.5) {
+//       resolve('You WIN 💰');
+//     } else {
+//       reject(new Error('You lost your money 💩'));
+//     }
+//   }, 2000);
+// });
 
-lotteryPromise.then(res => console.log(res)).catch(err => console.log(err));
+// lotteryPromise.then(res => console.log(res)).catch(err => console.log(err));
 
-// Now, in practice, most of the time all we actually do
-// is to consume promises.
-// And we usually only built promises
-// to basically wrap old
-// callback based functions into promises.
-// And this is a process that we call promisifying.
-// So basically promisifying
-// means to convert callback based asynchronous behavior
-// to promise based.
+// // Now, in practice, most of the time all we actually do
+// // is to consume promises.
+// // And we usually only built promises
+// // to basically wrap old
+// // callback based functions into promises.
+// // And this is a process that we call promisifying.
+// // So basically promisifying
+// // means to convert callback based asynchronous behavior
+// // to promise based.
 
-//====Promisifying setTimeout
+// //====Promisifying setTimeout
 
-// And so now inside of this function
-// we will actually create and return the promise.
-// So usually that's always what we do.
-// So creating a function
-// and then from there returning a promise.
-// And so this will then encapsulate
-// the asynchronous operation even further.
-// So essentially that's also what the fetch function does.
-// It's a function that returns a promise,
-// and so that is exactly what we will do
-// here with this wait function.
+// // And so now inside of this function
+// // we will actually create and return the promise.
+// // So usually that's always what we do.
+// // So creating a function
+// // and then from there returning a promise.
+// // And so this will then encapsulate
+// // the asynchronous operation even further.
+// // So essentially that's also what the fetch function does.
+// // It's a function that returns a promise,
+// // and so that is exactly what we will do
+// // here with this wait function.
 
-const wait = function (seconds) {
-  //   we actually don't even need the reject function.
-  // And that's because it's actually impossible
-  // for the timer to fail.
-  // And so therefore
-  // we will never mark this promise as rejected.
-  // And so here we don't even need
-  // to specify debt reject parameter.
-  // It's just like the array methods like map
-  // which always receive three arguments
-  // but most of the time we just use one or two of them.
-  // And so this is similar,
+// const wait = function (seconds) {
+//   //   we actually don't even need the reject function.
+//   // And that's because it's actually impossible
+//   // for the timer to fail.
+//   // And so therefore
+//   // we will never mark this promise as rejected.
+//   // And so here we don't even need
+//   // to specify debt reject parameter.
+//   // It's just like the array methods like map
+//   // which always receive three arguments
+//   // but most of the time we just use one or two of them.
+//   // And so this is similar,
 
-  return new Promise(function (resolve) {
-    //     And in this case, we're actually not even going to pass
-    // any resolved value into the resolve function
-    // because that's actually not mandatory.
-    // And so in the case of this timer,
-    // it's also not really necessary.
-    // And so in the case of a timer,
-    // it's also not really necessary to wait for some value.
-    // So in this case, all we want to do
-    // is to basically make our code wait.
-    // And so no resolved values are needed.
-    setTimeout(resolve, seconds * 1000);
-  });
-};
+//   return new Promise(function (resolve) {
+//     //     And in this case, we're actually not even going to pass
+//     // any resolved value into the resolve function
+//     // because that's actually not mandatory.
+//     // And so in the case of this timer,
+//     // it's also not really necessary.
+//     // And so in the case of a timer,
+//     // it's also not really necessary to wait for some value.
+//     // So in this case, all we want to do
+//     // is to basically make our code wait.
+//     // And so no resolved values are needed.
+//     setTimeout(resolve, seconds * 1000);
+//   });
+// };
 
-// // And then here in our callback function,
-// // remember we are not going to receive any resolved value.
-// // So we just leave this empty
-// wait(2)
+// // // And then here in our callback function,
+// // // remember we are not going to receive any resolved value.
+// // // So we just leave this empty
+// // wait(2)
+// //   .then(() => {
+// //     console.log('I waited for 2 seconds');
+
+// //     // And so just like before
+// //     // we now have to return a new promise here,
+// //     // so return, wait, and this time just one second.
+// //     // And so this is exactly what we did before
+// //     // when we wanted to chain two sequential Ajax calls
+// //     // using the fetch function.
+// //     // So in the result of the first fetch,
+// //     // we would create a new fetch and return it.
+// //     return wait(1);
+// //   })
+// //   .then(() => console.log('I waited for 1 second'));
+
+// // setTimeout(() => {
+// //   console.log('1 second passed');
+// //   setTimeout(() => {
+// //     console.log('2 second passed');
+// //     setTimeout(() => {
+// //       console.log('3 second passed');
+// //       setTimeout(() => {
+// //         console.log('4 second passed');
+// //       }, 1000);
+// //     }, 1000);
+// //   }, 1000);
+// // }, 1000);
+
+// // What matters is that now
+// // we no longer have this ugly
+// // and difficult to understand callback hill,
+// // but instead we have this nice sequence
+// // of asynchronous behavior.
+// wait(1)
 //   .then(() => {
-//     console.log('I waited for 2 seconds');
-
-//     // And so just like before
-//     // we now have to return a new promise here,
-//     // so return, wait, and this time just one second.
-//     // And so this is exactly what we did before
-//     // when we wanted to chain two sequential Ajax calls
-//     // using the fetch function.
-//     // So in the result of the first fetch,
-//     // we would create a new fetch and return it.
+//     console.log('1 second passed');
 //     return wait(1);
 //   })
-//   .then(() => console.log('I waited for 1 second'));
+//   .then(() => {
+//     console.log('2 seconds passed');
+//     return wait(1);
+//   })
+//   .then(() => {
+//     console.log('3 seconds passed');
+//     return wait(1);
+//   })
+//   .then(() => {
+//     console.log('4 seconds passed');
+//   });
 
-// setTimeout(() => {
-//   console.log('1 second passed');
-//   setTimeout(() => {
-//     console.log('2 second passed');
-//     setTimeout(() => {
-//       console.log('3 second passed');
-//       setTimeout(() => {
-//         console.log('4 second passed');
-//       }, 1000);
-//     }, 1000);
-//   }, 1000);
-// }, 1000);
+// //   Now finally dare also actually a way
+// // to very easy create a fulfilled
+// // or a rejected promise immediately.
 
-// What matters is that now
-// we no longer have this ugly
-// and difficult to understand callback hill,
-// but instead we have this nice sequence
-// of asynchronous behavior.
-wait(1)
-  .then(() => {
-    console.log('1 second passed');
-    return wait(1);
-  })
-  .then(() => {
-    console.log('2 seconds passed');
-    return wait(1);
-  })
-  .then(() => {
-    console.log('3 seconds passed');
-    return wait(1);
-  })
-  .then(() => {
-    console.log('4 seconds passed');
+// // And so basically this is a static method
+// // on the promise constructor.
+// // will resolve immediately
+// // like -> resolve('You WIN 💰');
+// Promise.resolve('abc').then(x => console.log(x));
+
+// //  and here to then is not necessary
+// // because there will be no resolved value anyway.
+// Promise.reject(new Error('Problem!')).catch(x => console.error(x));
+
+// // So this is how we built our own promises
+// // and how we promisify
+// // a very simple callback based asynchronous behavior function
+// // such as set timeout.
+
+//////////////////////////////////////////////////////////////////
+// Promisifying the Geolocation
+//////////////////////////////////////////////////////////////////
+
+// we're gonna promisify the geolocation API,
+// and this is gonna be really cool
+// because it will allow us to take the small app
+// that we built in the last coding challenge
+// to the next level.
+// Now we used the geolocation API before,
+// and so let's start by reviewing how it works.
+// So remember we use navigator
+// .geolocation.getcurrentposition,
+// and then this function here accepts two callbacks
+// where the first is for the success
+// and the second one is for the error.
+
+navigator.geolocation.getCurrentPosition(
+  position => console.log(position),
+  err => console.log(err)
+);
+
+// this is actually asynchronous behavior
+// in exactly the way that we have been talking about.
+
+console.log('Getting position');
+
+// and so this is another great opportunity
+// to promisify a callback based API, to a promise based API.
+const getPosition = function () {
+  return new Promise(function (resolve, reject) {
+    // navigator.geolocation.getCurrentPosition(
+    //   position => resolve(position), //success
+    //   err => reject(err)
+    // );
+    //================
+    //     So this is exactly the same as this one here.
+    // So before we specified the callback manually like this,
+    // but all we did was to take the position
+    // and pass it down into resolve,
+    // but here that now happens automatically.
+    // So now resolve itself is the callback function,
+    // which will get called with the position,
+    navigator.geolocation.getCurrentPosition(resolve, reject);
   });
+};
+// getPosition().then(pos => console.log(pos));
 
-//   Now finally dare also actually a way
-// to very easy create a fulfilled
-// or a rejected promise immediately.
+///=====
+// but now let's actually take it to the next level.
+// So remember how in the last coding challenge,
+// we built a function which received GPS coordinates
+// as an input, and then rendered the corresponding country.
+// Well, now we actually got these coordinates via geolocation
+// and so we don't even have to pass in any coordinates
+// into that function.
 
-// And so basically this is a static method
-// on the promise constructor.
-// will resolve immediately
-// like -> resolve('You WIN 💰');
-Promise.resolve('abc').then(x => console.log(x));
+// but now since we have this get positioned function,
+// we actually no longer need to even pass in
+// these coordinates
+// and so now we're gonna be able to build a function
+// that will tell us where we are in the world,
+// simply based on the geolocation of our device.
+// const whereAmI = function (lat, lng) {
 
-//  and here to then is not necessary
-// because there will be no resolved value anyway.
-Promise.reject(new Error('Problem!')).catch(x => console.error(x));
+const whereAmI = function () {
+  getPosition()
+    .then(pos => {
+      // console.log(pos.coords);
+      const { latitude: lat, longitude: lng } = pos.coords;
 
-// So this is how we built our own promises
-// and how we promisify
-// a very simple callback based asynchronous behavior function
-// such as set timeout.
+      return fetch(
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
+      );
+    })
+    .then(response => {
+      if (!response.ok)
+        throw new Error(`Problem with geocoding ${response.status}`);
+
+      return response.json();
+    })
+    .then(data => {
+      console.log(`You are in ${data.city}, ${data.countryName}`);
+
+      return fetch(
+        `https://countries-api-836d.onrender.com/countries/name/${data.countryName}`
+      );
+    })
+    .then(response => {
+      if (!response.ok)
+        throw new Error(`Country not found (${response.status})`);
+
+      return response.json();
+    })
+    .then(data => {
+      renderCountry(data[0]);
+    })
+    .catch(err => console.error(`${err.message}`));
+};
+
+btn.addEventListener('click', whereAmI);
+
+// Now, just imagine that you would have to handle
+// all of these asynchronous operations here
+// using callback function.
+// So that would literally be hell.
+// So therefore the name callback hell,
+
+// but again, with this,
+// we have a really nice flat chain of promises
+// that's easy to handle and also easy to manage.
+// Now.
+
+// But anyway, with this, we saw that We can really promisify
+// all kinds of asynchronous stuff in JavaScript.
+// For example, we could also promisify,
+// the old XML HTTP request function
+// that we used in the beginning to make Ajax calls,
