@@ -476,42 +476,111 @@ const renderError = function (msg) {
 // because it's very common that errors happen
 // in web applications.
 
+// const getCountryData = function (country) {
+//   // Country 1
+//   fetch(`https://countries-api-836d.onrender.com/countries/name/${country}`)
+//     .then(response => {
+//       console.log(response);
+
+//       //       the error message, then we use the throw keyword here,
+//       // which will immediately terminate the current function.
+//       // So just like return does it.
+//       // Now the effect of creating,
+//       // and throwing an error in any of these then methods
+//       // is that the promise will immediately reject.
+//       // So basically, the promise returned
+//       // by this then handler here will be a rejected promise.
+//       // And that rejection will then propagate all the way down
+//       // to the catch handler
+//       if (!response.ok)
+//         throw new Error(`Country not found (${response.status})`);
+
+//       return response.json();
+//     })
+//     .then(data => {
+//       renderCountry(data[0]);
+//       // const neighbour = data[0].borders[0];
+//       const neighbour = ' sdfsfsf';
+
+//       if (!neighbour) return;
+
+//       // Country 2
+//       return fetch(
+//         `https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`
+//       );
+//     })
+//     .then(response => {
+//       if (!response.ok)
+//         throw new Error(`Country not found (${response.status})`);
+
+//       return response.json();
+//     })
+//     .then(data => renderCountry(data, 'neighbour'))
+
+//     //     All right, so again this catch method here
+//     // at the end of the chain will basically catch any errors
+//     // that occur in any place in this whole promise chain
+//     // and no matter where that is.
+//     // So errors basically propagate down the chain
+//     // until they are caught,
+//     .catch(err => {
+//       console.error(`${err} 💥💥💥`);
+//       renderError(`Something went wrong 💥💥 ${err.message}. Try again!`);
+//     })
+
+//     //     So besides then and catch there is also the finally method.
+//     // So let's add a finally here, finally.
+//     // And then the callback function that we defined here
+//     // will always be called whatever happens with the promise.
+//     // So no matter if the promise is fulfilled or rejected
+//     // this callback function that we define here
+//     // is gonna be called always.
+//     .finally(() => {
+//       countriesContainer.style.opacity = 1;
+//     });
+// };
+
+///////////////////////////////////////////////////////////
+// Throwing Errors Manually
+///////////////////////////////////////////////////////////
+// this getJSON function will actually return a promise.
+// And so this is then just like any other promise
+const getJson = function (url, errorMsg = 'Something went wrong') {
+  return fetch(url).then(response => {
+    if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
+
+    return response.json();
+  });
+};
+
 const getCountryData = function (country) {
   // Country 1
-  fetch(`https://countries-api-836d.onrender.com/countries/name/${country}`)
-    .then(response => response.json())
+
+  getJson(
+    `https://countries-api-836d.onrender.com/countries/name/${country}`,
+    'Country not found'
+  )
     .then(data => {
       renderCountry(data[0]);
       const neighbour = data[0].borders[0];
 
-      if (!neighbour) return;
+      console.log(neighbour);
+
+      if (!neighbour) throw new Error('No neighbour found');
 
       // Country 2
-      return fetch(
-        `https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`
+      return getJson(
+        `https://countries-api-836d.onrender.com/countries/alpha/${neighbour}`,
+        'Country not found'
       );
     })
-    .then(response => response.json())
     .then(data => renderCountry(data, 'neighbour'))
 
-    //     All right, so again this catch method here
-    // at the end of the chain will basically catch any errors
-    // that occur in any place in this whole promise chain
-    // and no matter where that is.
-    // So errors basically propagate down the chain
-    // until they are caught,
     .catch(err => {
       console.error(`${err} 💥💥💥`);
       renderError(`Something went wrong 💥💥 ${err.message}. Try again!`);
     })
 
-    //     So besides then and catch there is also the finally method.
-    // So let's add a finally here, finally.
-    // And then the callback function that we defined here
-    // will always be called whatever happens with the promise.
-    // So no matter if the promise is fulfilled or rejected
-    // this callback function that we define here
-    // is gonna be called always.
     .finally(() => {
       countriesContainer.style.opacity = 1;
     });
@@ -520,3 +589,30 @@ const getCountryData = function (country) {
 btn.addEventListener('click', function () {
   getCountryData('usa');
 });
+
+getCountryData('australia');
+
+// All right, so let's now quickly recap here.
+// And I think that the big takeaway from this lecture
+// is that whenever we want to create some error
+// that we want to handle down here,
+// in the catch handler, all we need to do is to throw,
+// and create a new error, just like we did here.
+// And of course, we can do that for multiple reasons.
+// So in this case, here, we did it simply
+// because in the situation, no neighbor can be found.
+// And so that is a good reason to display an error message
+// on the user interface,
+// and since we do that down here in our error handler,
+// the best way of doing that is to indeed throw an error.
+// And remember that this works,
+// because throwing an error inside of this callback function
+// of this then method will immediately reject this promise.
+// And so then that rejected promise will travel down
+// the chain until it is eventually caught somewhere.
+// So again, in this case, it is right here
+// in this catch handler.
+// So when working with real applications
+// in the real world, really make sure
+// to keep this technique in mind,
+// because it's really important.
