@@ -713,144 +713,296 @@ const renderError = function (msg) {
 // The Event Loop in Practice
 ///////////////////////////////////////////////////////////////////
 
-console.log('Test start');
-setTimeout(() => console.log('0 sec timer'), 0);
-Promise.resolve('Resolved promise 1').then(res => console.log(res));
+// console.log('Test start');
+// setTimeout(() => console.log('0 sec timer'), 0);
+// Promise.resolve('Resolved promise 1').then(res => console.log(res));
 
-Promise.resolve('Resolved promise 2').then(res => {
-  for (let i = 0; i < 10000000000; i++) {}
-  console.log(res);
+// Promise.resolve('Resolved promise 2').then(res => {
+//   for (let i = 0; i < 10000000000; i++) {}
+//   console.log(res);
+// });
+// console.log('Test end');
+
+// // So the first two messages that are gonna be printed
+// // should be pretty obvious,
+// // that's because we already know that any top level of coat.
+// // So coat outside of any callback, will run first.
+// // And so of course, the first two logs will come
+// // from these two synchronous, console dot log Sierra.
+// // But now between the timer, and the resolved promise here,
+// // it might be a little bit trickier.
+// // So both the timer and a promise,
+// // will finish at the exact same time.
+// // So both right after zero seconds.
+// // So the timer,because we told it to finish after zero seconds
+
+// // and a promise because we told it to immediately
+// // become resolved.
+
+// // And so therefore,
+// // they will both finish at the exact same time.
+// // So which one do you think will be handled first
+// // or in other words,
+// // which of these two callbacks here will be executed first?
+// // Well, the timer appears first in the coat
+// // and so it kind of finished first.
+// // And so it's callback,
+// // will be put on the callback queue first, but does that mean
+// // that this call back here will be executed first?
+// // Well, actually, no, it doesn't.
+// // And that's because of the micro-tasks queue, remember?
+// // So the callback of the resolved promise here,
+// // so this one will be put on the micro-tasks queue and this
+// // micro-tasks queue, as you learned in the last video
+// // has priority over the callback queue.
+
+// // And so after this whole code runs,
+// // we will have one callback in a callback queue
+// // and one in a micro-tasks queue.
+// // And therefore the one from the micro tests queue
+// // should be executed first.
+// // And so therefore the callback from the micro-tasks queue
+// // should be executed first.
+// // And so that's this one here and there for the first message
+// // to appear of these two, should be resolved Promise one.
+// // All right.
+
+// // So the order in which they should appear
+// // is this tenders, tenders and finally the timer.
+// // And so that's now finally confirmed as, so I'm saving it
+// // and indeed did as exactly as expected.
+// // And so that's a relief actually.
+// // So what I told you in the last lecture is actually true.
+// // Now we proved it with coat.
+
+// // Now, remember that the implication
+// // of the fact that micro-tasks have priority
+// // over regular callbacks, is that if one of
+// // the micro-tasks takes a long time to run,
+// // then the timer will actually be delayed and not run after
+// // the zero seconds that we specified here, right?
+// // So instead it will run a little bit later just after
+// // the micro-task is actually done with its work.
+// // And so to finish this lecture,
+
+// // let's actually simulate what I just said.
+// // So here I will create another promise,
+// // that will immediately resolve.
+// // So let's just say resolved promise two, and then again,
+// // we can handle it here.
+// // And then as always, we want to log,
+// // the result to the console.
+// // But before we doing that,
+// // we actually want this callback function
+// // to have a really heavy task,
+// // which should take a lot of time.
+// // And so let's simulate that this callback takes a long time
+// // to run, by looping over a large number.
+// // So we can do the simulation simply,
+// // with an old school four loop.
+// // So let's start with I at zero and now I will loop
+// // all the way until one like very large number.
+// // Let's say this, and I will have to experiment a little bit.
+// // And for your computer, it might indeed be different.
+// // So if your computer is slower,
+// // maybe then you want a smaller number
+// // and maybe it's faster than mine.
+// // And then maybe a smaller number will be enough, right?
+// // I'm not sure if I said it correctly.
+// // So if your computer is slower than mine,
+// // then you will need a larger number, right?
+// // And so again, this line of code here will simulate
+// // that the callback function takes a long time.
+// // So really just this micro-task takes a long time.
+// // All right, it is not the asynchronous task itself.
+// // So the promise itself will still be resolved immediately,
+// // but then the micro-task that it contains,
+// // so that it puts on the micro-tasks queue.
+// // That's the one that will take a long time.
+// // And so by doing that,
+// // I can show you that the callbacks in the callback queue,
+// // just like this one here, will indeed be delayed
+// // and not run after zero seconds.
+// // So let's try this now,
+// // and you see it took a long time here
+// // until this lock appeared, right?
+
+// // So maybe we can have even a bigger number.
+// // And I hope that my computer is not going to explode,
+// // with this one.
+// // So you see that the page is kind of loading here
+// // and it's taking a lot of time.
+// // And so, actually now eventually it finished,
+// // but you see, that now only after all this work,
+// // the zero second timer message appeared on the screen.
+// // And so this is actual proof that these zero seconds
+// // that we have here are not a guarantee.
+// // Okay.
+
+// // And that is exactly what I wanted to show you.
+// // So this means, that you cannot really do high precision
+// // things using JavaScript timers.
+// // So just keep that in mind,
+// // whenever you are working with promises.
+// // So basically with micro-tasks,
+// // and with timers at the same time.
+// // Okay.
+
+// // Let's just remove the zero here,
+// // so that you don't explode your computer,
+// // but you still see that the effect is the same.
+// // All right, and that's actually enough for this video.
+// // I think I proved my point and demonstrated to the things
+// // that we just learned in the previous lecture.
+
+/////////////////////////////////////////////////////////////
+// Building a Simple Promise
+/////////////////////////////////////////////////////////////
+
+// and we create a new promise using the promise constructor.
+// So that's new promise like this.
+// So just like many other built-in objects.
+// And so what this means is that promises
+// are essentially just a special kind of object in JavaScript.
+// Now the promise constructor takes exactly one argument
+// and that is the so-called executor function.
+// So we need to pass in a function here.
+
+const lotteryPromise = new Promise(function (resolve, reject) {
+  console.log('Lottery draw is happening 🔮');
+
+  setTimeout(function () {
+    if (Math.random() >= 0.5) {
+      resolve('You WIN 💰');
+    } else {
+      reject(new Error('You lost your money 💩'));
+    }
+  }, 2000);
 });
-console.log('Test end');
 
-// So the first two messages that are gonna be printed
-// should be pretty obvious,
-// that's because we already know that any top level of coat.
-// So coat outside of any callback, will run first.
-// And so of course, the first two logs will come
-// from these two synchronous, console dot log Sierra.
-// But now between the timer, and the resolved promise here,
-// it might be a little bit trickier.
-// So both the timer and a promise,
-// will finish at the exact same time.
-// So both right after zero seconds.
-// So the timer,because we told it to finish after zero seconds
+lotteryPromise.then(res => console.log(res)).catch(err => console.log(err));
 
-// and a promise because we told it to immediately
-// become resolved.
+// Now, in practice, most of the time all we actually do
+// is to consume promises.
+// And we usually only built promises
+// to basically wrap old
+// callback based functions into promises.
+// And this is a process that we call promisifying.
+// So basically promisifying
+// means to convert callback based asynchronous behavior
+// to promise based.
 
-// And so therefore,
-// they will both finish at the exact same time.
-// So which one do you think will be handled first
-// or in other words,
-// which of these two callbacks here will be executed first?
-// Well, the timer appears first in the coat
-// and so it kind of finished first.
-// And so it's callback,
-// will be put on the callback queue first, but does that mean
-// that this call back here will be executed first?
-// Well, actually, no, it doesn't.
-// And that's because of the micro-tasks queue, remember?
-// So the callback of the resolved promise here,
-// so this one will be put on the micro-tasks queue and this
-// micro-tasks queue, as you learned in the last video
-// has priority over the callback queue.
+//====Promisifying setTimeout
 
-// And so after this whole code runs,
-// we will have one callback in a callback queue
-// and one in a micro-tasks queue.
-// And therefore the one from the micro tests queue
-// should be executed first.
-// And so therefore the callback from the micro-tasks queue
-// should be executed first.
-// And so that's this one here and there for the first message
-// to appear of these two, should be resolved Promise one.
-// All right.
+// And so now inside of this function
+// we will actually create and return the promise.
+// So usually that's always what we do.
+// So creating a function
+// and then from there returning a promise.
+// And so this will then encapsulate
+// the asynchronous operation even further.
+// So essentially that's also what the fetch function does.
+// It's a function that returns a promise,
+// and so that is exactly what we will do
+// here with this wait function.
 
-// So the order in which they should appear
-// is this tenders, tenders and finally the timer.
-// And so that's now finally confirmed as, so I'm saving it
-// and indeed did as exactly as expected.
-// And so that's a relief actually.
-// So what I told you in the last lecture is actually true.
-// Now we proved it with coat.
+const wait = function (seconds) {
+  //   we actually don't even need the reject function.
+  // And that's because it's actually impossible
+  // for the timer to fail.
+  // And so therefore
+  // we will never mark this promise as rejected.
+  // And so here we don't even need
+  // to specify debt reject parameter.
+  // It's just like the array methods like map
+  // which always receive three arguments
+  // but most of the time we just use one or two of them.
+  // And so this is similar,
 
-// Now, remember that the implication
-// of the fact that micro-tasks have priority
-// over regular callbacks, is that if one of
-// the micro-tasks takes a long time to run,
-// then the timer will actually be delayed and not run after
-// the zero seconds that we specified here, right?
-// So instead it will run a little bit later just after
-// the micro-task is actually done with its work.
-// And so to finish this lecture,
+  return new Promise(function (resolve) {
+    //     And in this case, we're actually not even going to pass
+    // any resolved value into the resolve function
+    // because that's actually not mandatory.
+    // And so in the case of this timer,
+    // it's also not really necessary.
+    // And so in the case of a timer,
+    // it's also not really necessary to wait for some value.
+    // So in this case, all we want to do
+    // is to basically make our code wait.
+    // And so no resolved values are needed.
+    setTimeout(resolve, seconds * 1000);
+  });
+};
 
-// let's actually simulate what I just said.
-// So here I will create another promise,
-// that will immediately resolve.
-// So let's just say resolved promise two, and then again,
-// we can handle it here.
-// And then as always, we want to log,
-// the result to the console.
-// But before we doing that,
-// we actually want this callback function
-// to have a really heavy task,
-// which should take a lot of time.
-// And so let's simulate that this callback takes a long time
-// to run, by looping over a large number.
-// So we can do the simulation simply,
-// with an old school four loop.
-// So let's start with I at zero and now I will loop
-// all the way until one like very large number.
-// Let's say this, and I will have to experiment a little bit.
-// And for your computer, it might indeed be different.
-// So if your computer is slower,
-// maybe then you want a smaller number
-// and maybe it's faster than mine.
-// And then maybe a smaller number will be enough, right?
-// I'm not sure if I said it correctly.
-// So if your computer is slower than mine,
-// then you will need a larger number, right?
-// And so again, this line of code here will simulate
-// that the callback function takes a long time.
-// So really just this micro-task takes a long time.
-// All right, it is not the asynchronous task itself.
-// So the promise itself will still be resolved immediately,
-// but then the micro-task that it contains,
-// so that it puts on the micro-tasks queue.
-// That's the one that will take a long time.
-// And so by doing that,
-// I can show you that the callbacks in the callback queue,
-// just like this one here, will indeed be delayed
-// and not run after zero seconds.
-// So let's try this now,
-// and you see it took a long time here
-// until this lock appeared, right?
+// // And then here in our callback function,
+// // remember we are not going to receive any resolved value.
+// // So we just leave this empty
+// wait(2)
+//   .then(() => {
+//     console.log('I waited for 2 seconds');
 
-// So maybe we can have even a bigger number.
-// And I hope that my computer is not going to explode,
-// with this one.
-// So you see that the page is kind of loading here
-// and it's taking a lot of time.
-// And so, actually now eventually it finished,
-// but you see, that now only after all this work,
-// the zero second timer message appeared on the screen.
-// And so this is actual proof that these zero seconds
-// that we have here are not a guarantee.
-// Okay.
+//     // And so just like before
+//     // we now have to return a new promise here,
+//     // so return, wait, and this time just one second.
+//     // And so this is exactly what we did before
+//     // when we wanted to chain two sequential Ajax calls
+//     // using the fetch function.
+//     // So in the result of the first fetch,
+//     // we would create a new fetch and return it.
+//     return wait(1);
+//   })
+//   .then(() => console.log('I waited for 1 second'));
 
-// And that is exactly what I wanted to show you.
-// So this means, that you cannot really do high precision
-// things using JavaScript timers.
-// So just keep that in mind,
-// whenever you are working with promises.
-// So basically with micro-tasks,
-// and with timers at the same time.
-// Okay.
+// setTimeout(() => {
+//   console.log('1 second passed');
+//   setTimeout(() => {
+//     console.log('2 second passed');
+//     setTimeout(() => {
+//       console.log('3 second passed');
+//       setTimeout(() => {
+//         console.log('4 second passed');
+//       }, 1000);
+//     }, 1000);
+//   }, 1000);
+// }, 1000);
 
-// Let's just remove the zero here,
-// so that you don't explode your computer,
-// but you still see that the effect is the same.
-// All right, and that's actually enough for this video.
-// I think I proved my point and demonstrated to the things
-// that we just learned in the previous lecture.
+// What matters is that now
+// we no longer have this ugly
+// and difficult to understand callback hill,
+// but instead we have this nice sequence
+// of asynchronous behavior.
+wait(1)
+  .then(() => {
+    console.log('1 second passed');
+    return wait(1);
+  })
+  .then(() => {
+    console.log('2 seconds passed');
+    return wait(1);
+  })
+  .then(() => {
+    console.log('3 seconds passed');
+    return wait(1);
+  })
+  .then(() => {
+    console.log('4 seconds passed');
+  });
+
+//   Now finally dare also actually a way
+// to very easy create a fulfilled
+// or a rejected promise immediately.
+
+// And so basically this is a static method
+// on the promise constructor.
+// will resolve immediately
+// like -> resolve('You WIN 💰');
+Promise.resolve('abc').then(x => console.log(x));
+
+//  and here to then is not necessary
+// because there will be no resolved value anyway.
+Promise.reject(new Error('Problem!')).catch(x => console.error(x));
+
+// So this is how we built our own promises
+// and how we promisify
+// a very simple callback based asynchronous behavior function
+// such as set timeout.
