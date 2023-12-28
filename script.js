@@ -1619,81 +1619,261 @@ const getJson = function (url, errorMsg = 'Something went wrong') {
 // Running Promises in Parallel
 //////////////////////////////////////////////////////////////
 
-const get3Countries = async function (c1, c2, c3) {
-  try {
-    //     But if we think about what we did here,
-    // then maybe it actually doesn't make so much sense
-    // because what we did here basically
-    // was to run all these Ajax calls one after another,
-    // even though the result of the second one here
-    // does not depend on the first one,
-    // and the result of the third one
-    // does also not depend on any of the other ones.
-    // And so actually this doesn't make much sense.
-    // Why should the second Ajax call wait for the first one?
-    // const [data1] = await getJson(
-    //   `https://countries-api-836d.onrender.com/countries/name/${c1}`
-    // );
-    // const [data2] = await getJson(
-    //   `https://countries-api-836d.onrender.com/countries/name/${c2}`
-    // );
-    // const [data3] = await getJson(
-    //   `https://countries-api-836d.onrender.com/countries/name/${c3}`
-    // );
-    // console.log([data1.capital, data2.capital, data3.capital]);
+// const get3Countries = async function (c1, c2, c3) {
+//   try {
+//     //     But if we think about what we did here,
+//     // then maybe it actually doesn't make so much sense
+//     // because what we did here basically
+//     // was to run all these Ajax calls one after another,
+//     // even though the result of the second one here
+//     // does not depend on the first one,
+//     // and the result of the third one
+//     // does also not depend on any of the other ones.
+//     // And so actually this doesn't make much sense.
+//     // Why should the second Ajax call wait for the first one?
+//     // const [data1] = await getJson(
+//     //   `https://countries-api-836d.onrender.com/countries/name/${c1}`
+//     // );
+//     // const [data2] = await getJson(
+//     //   `https://countries-api-836d.onrender.com/countries/name/${c2}`
+//     // );
+//     // const [data3] = await getJson(
+//     //   `https://countries-api-836d.onrender.com/countries/name/${c3}`
+//     // );
+//     // console.log([data1.capital, data2.capital, data3.capital]);
 
-    //     And so this is once again,
-    // kind of a helper function on this promise constructor.
-    // So it's a static method, right?
-    // Now, this function here takes in an array of promises,
-    // and it will return a new promise,
-    // which will then run all the promises
-    // in the array at the same time.
-    const data = await Promise.all([
-      getJson(`https://countries-api-836d.onrender.com/countries/name/${c1}`),
-      getJson(`https://countries-api-836d.onrender.com/countries/name/${c2}`),
-      getJson(`https://countries-api-836d.onrender.com/countries/name/${c3}`),
-    ]);
+//     //     And so this is once again,
+//     // kind of a helper function on this promise constructor.
+//     // So it's a static method, right?
+//     // Now, this function here takes in an array of promises,
+//     // and it will return a new promise,
+//     // which will then run all the promises
+//     // in the array at the same time.
+//     const data = await Promise.all([
+//       getJson(`https://countries-api-836d.onrender.com/countries/name/${c1}`),
+//       getJson(`https://countries-api-836d.onrender.com/countries/name/${c2}`),
+//       getJson(`https://countries-api-836d.onrender.com/countries/name/${c3}`),
+//     ]);
 
-    //     because remember that we want to actually return an array,
-    // but not this array,
-    // but simply an array with all the capital cities.
-    console.log(data.map(d => d[0].capital));
+//     //     because remember that we want to actually return an array,
+//     // but not this array,
+//     // but simply an array with all the capital cities.
+//     console.log(data.map(d => d[0].capital));
 
-    // just one thing
-    // that's also very important to mention here
-    // is that if one of the promises rejects,
-    // then the whole promise.all actually rejects as well.
-    // So we say that promise.all short circuits
-    // when one promise rejects.
-    // So again, because one rejected promise
-    // is enough for the entire thing to reject as well.
-  } catch (error) {
-    console.error(error);
-  }
+//     // just one thing
+//     // that's also very important to mention here
+//     // is that if one of the promises rejects,
+//     // then the whole promise.all actually rejects as well.
+//     // So we say that promise.all short circuits
+//     // when one promise rejects.
+//     // So again, because one rejected promise
+//     // is enough for the entire thing to reject as well.
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
+
+// get3Countries('usa', 'Spain', 'Germany');
+
+// // Great, so whenever you have a situation
+// // in which you need to do multiple asynchronous operations
+// // at the same time,
+// // and operations that don't depend on one another,
+// // then you should always, always run them in parallel,
+// // just like we did here using promise.all.
+
+// // And this is actually more common than you might think.
+// // And so please keep this technique in mind
+// // because your users will thank you.
+
+// // And of course,
+// // just in case you're not using a single weight,
+// // you can, of course also take this result here
+// // and then handle it with the then method.
+// // So that's gonna work just exactly the same
+// // as here with a single weight.
+// // Okay, and that's the promise.all combinator.
+// // So it's called a combinator function
+// // because it allows us to combine multiple promises.
+// // And there are actually other combinator functions,
+// // and so let's take a look at them right in the next video.
+
+////////////////////////////////////////////////////////////////////
+// Other Promise Combinators: race, allSettled and any
+////////////////////////////////////////////////////////////////////
+
+//==== Promise.race====
+// just like all other combinators,
+// receives an array of promises and it also returns a promise.
+// Now this promise returned by Promise.race
+// is settled as soon as one of the input promises settles.
+// And remember that settled simply means
+// that a value is available,
+// but it doesn't matter
+// if the promise got rejected or fulfilled.
+// And so in Promis.race,
+// basically the first settled promise wins the race.
+
+(async function () {
+  const res = await Promise.race([
+    getJson(`https://countries-api-836d.onrender.com/countries/name/italy`),
+    getJson(`https://countries-api-836d.onrender.com/countries/name/egypt`),
+    getJson(`https://countries-api-836d.onrender.com/countries/name/mexico`),
+  ]);
+
+  //   Now, if the winning promise is then a fulfilled promise,
+  // then the fulfillment value of this whole race promise
+  // is gonna be the fulfillment value of the winning promise.
+
+  console.log(res[0]);
+
+  //   Okay, so again, just keep in mind
+  // that here in Promised.race,
+  // we only get one result
+  // and not an array of the results of all the three.
+
+  //   Now a promise that gets rejected
+  // can actually also win the race.
+  // And so we say that Promise.race short circuits
+  // whenever one of the promises gets settled.
+  // And so again, that means no matter if fulfilled or rejected.
+})();
+
+// Promise.race is actually very useful
+// to prevent against never ending promises
+// or also very long running promises.
+// For example, if your user
+// has a very bad internet connection,
+// then a fetch requests in your application
+// might take way too long to actually be useful.
+// And so we can create a special time out promise,
+// which automatically rejects after a certain time has passed.
+
+// So let's do that.
+// And it's gonna be similar to the wait function
+// that we created earlier.
+// But the difference is that this one is actually going
+// to reject and not going to resolve.
+// So this time let's actually pass in milliseconds, right?
+// Well, let's just pass in seconds
+// just to make it consistent with the other one.
+// So return new Promise
+// and execute a function.
+// And again, in this case, we will not resolve but reject.
+// And so here for the resolve function,
+// which is always the first one we can once again,
+// use this throw away variable.
+// So using this convention
+// and then here reject and setTimeout
+// and here we specify a callback function.
+// And so we say that after a certain amount of seconds,
+// let's call it sec like this actually.
+// So after this time has passed, we reject the promise.
+// So we create a new error
+// saying, "Requests took too long."
+
+const timeout = function (sec) {
+  return new Promise((_, reject) => {
+    setTimeout(function () {
+      reject(new Error('Request took too long!'));
+    }, sec * 1000);
+  });
 };
 
-get3Countries('usa', 'Spain', 'Germany');
+// And so now we can simply have the Ajax call
 
-// Great, so whenever you have a situation
-// in which you need to do multiple asynchronous operations
-// at the same time,
-// and operations that don't depend on one another,
-// then you should always, always run them in parallel,
-// just like we did here using promise.all.
+Promise.race([
+  getJson(`https://countries-api-836d.onrender.com/countries/name/tanzania`),
+  timeout(2),
+])
+  .then(res => console.log(res[0]))
+  .catch(err => console.error(err));
 
-// And this is actually more common than you might think.
-// And so please keep this technique in mind
-// because your users will thank you.
+// Promise.race and Promise.all
+// are by far the two most important promise combinators.
 
-// And of course,
-// just in case you're not using a single weight,
-// you can, of course also take this result here
-// and then handle it with the then method.
-// So that's gonna work just exactly the same
-// as here with a single weight.
-// Okay, and that's the promise.all combinator.
-// So it's called a combinator function
-// because it allows us to combine multiple promises.
-// And there are actually other combinator functions,
-// and so let's take a look at them right in the next video.
+///====== Promise.allSettled ======
+// And this one is a pretty new one.
+// It is from ES2020 and it is actually a very simple one.
+// So it takes in an array of promises again,
+// and it will simply return an array
+// of all the settled promises.
+// And so again, no matter if the promises got rejected or not.
+// So it's similar to Promise.all
+// in regard that it also returns an array of all the results,
+// but the difference is that Promise.all
+// will short circuit as soon as one promise rejects,
+// but Promise.allSettled, simply never short circuits.
+// So it will simply return
+// all the results of all the promises.
+
+Promise.allSettled([
+  //   So I will simply fake promises
+  // by saying Promise.resolve
+  // Success, all right.
+  // And so you already know that this here automatically creates
+  // a promise that is resolved.
+  // And so we don't have to wait for anything to finish
+  Promise.resolve('Success'),
+  Promise.reject('ERROR'),
+  Promise.resolve('Another success'),
+
+  //   Now here we want actually all of the results.
+  // And so indeed here we get three results,
+  // even though one of them rejected, okay?
+  // So this is the result of the three promises
+  // and yeah, so this is how they look like
+  // when we do them manually with resolve, reject and resolve.
+]).then(res => console.log(res));
+
+// Just contrast that with Promise.all,
+// so that would then look different.
+// So here we would get an error
+Promise.all([
+  Promise.resolve('Success'),
+  Promise.reject('ERROR'),
+  Promise.resolve('Another success'),
+])
+  .then(res => console.log(res))
+  .catch(err => console.error(err));
+
+//   And so here we will simply get error and that's again...
+// Because the .allpromise combinator will short circuit
+// if there is one error, if there is one rejected promise.
+// So that's the difference between these two.
+
+//======= Promise.any [ES2021]=========
+// Now Promise.any is even more modern.
+// It is ES2021 and actually at the time of recording,
+// this one doesn't work in my browser,
+// but probably by the time I'm releasing this course,
+// it will work in the latest version of Google Chrome.
+Promise.any([
+  Promise.resolve('Success'),
+  Promise.reject('ERROR'),
+  Promise.resolve('Another success'),
+])
+  .then(res => console.log(res))
+  .catch(err => console.error(err));
+
+//   So as always Promise.any takes in an array
+// of multiple promises and this one will then return
+// the first fulfilled promise
+// and it will simply ignore rejected promises.
+// So basically Promise.any is very similar
+// to Promise.race with the difference
+// that rejected promises are ignored.
+// And so therefore the results of Promise.any
+// is always gonna be a fulfilled promise,
+// unless of course all of them reject, okay.
+// But at the time you're watching this video
+// again, this should already work.
+// And then maybe you can experiment a little bit with this
+// to see the difference between
+// all the four Promise combinators.
+
+// And again, the most important ones
+// are definitely
+// Promise.all and
+// Promise.race.
+// So keep at least these two in mind for your own projects.
