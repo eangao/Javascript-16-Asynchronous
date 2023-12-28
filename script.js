@@ -1130,100 +1130,268 @@ const renderError = function (msg) {
 // Coding Challenge #2
 ////////////////////////////////////////////////////////////////////
 
-// For this challenge you will actually have to watch the video! Then, build the image
-// loading functionality that I just showed you on the screen.
+// // For this challenge you will actually have to watch the video! Then, build the image
+// // loading functionality that I just showed you on the screen.
 
-// Your tasks:
+// // Your tasks:
 
-// Tasks are not super-descriptive this time, so that you can figure out some stuff by
-// yourself. Pretend you're working on your own �
+// // Tasks are not super-descriptive this time, so that you can figure out some stuff by
+// // yourself. Pretend you're working on your own �
 
-// PART 1
+// // PART 1
 
-// 1. Create a function 'createImage' which receives 'imgPath' as an input.
-// This function returns a promise which creates a new image (use
-// document.createElement('img')) and sets the .src attribute to the
-// provided image path
+// // 1. Create a function 'createImage' which receives 'imgPath' as an input.
+// // This function returns a promise which creates a new image (use
+// // document.createElement('img')) and sets the .src attribute to the
+// // provided image path
 
-// 2. When the image is done loading, append it to the DOM element with the
-// 'images' class, and resolve the promise. The fulfilled value should be the
-// image element itself. In case there is an error loading the image (listen for
-// the'error' event), reject the promise
+// // 2. When the image is done loading, append it to the DOM element with the
+// // 'images' class, and resolve the promise. The fulfilled value should be the
+// // image element itself. In case there is an error loading the image (listen for
+// // the'error' event), reject the promise
 
-// 3. If this part is too tricky for you, just watch the first part of the solution
+// // 3. If this part is too tricky for you, just watch the first part of the solution
 
-// PART 2
+// // PART 2
 
-// 4. Consume the promise using .then and also add an error handler
+// // 4. Consume the promise using .then and also add an error handler
 
-// 5. After the image has loaded, pause execution for 2 seconds using the 'wait'
-// function we created earlier
+// // 5. After the image has loaded, pause execution for 2 seconds using the 'wait'
+// // function we created earlier
 
-// 6. After the 2 seconds have passed, hide the current image (set display CSS
-// property to 'none'), and load a second image (Hint: Use the image element
-// returned by the 'createImage' promise to hide the current image. You will
-// need a global variable for that �)
+// // 6. After the 2 seconds have passed, hide the current image (set display CSS
+// // property to 'none'), and load a second image (Hint: Use the image element
+// // returned by the 'createImage' promise to hide the current image. You will
+// // need a global variable for that �)
 
-// 7. After the second image has loaded, pause execution for 2 seconds again
+// // 7. After the second image has loaded, pause execution for 2 seconds again
 
-// 8. After the 2 seconds have passed, hide the current image
+// // 8. After the 2 seconds have passed, hide the current image
 
-// Test data: Images in the img folder. Test the error handler by passing a wrong
-// image path. Set the network speed to “Fast 3G” in the dev tools Network tab,
-// otherwise images load too fast
+// // Test data: Images in the img folder. Test the error handler by passing a wrong
+// // image path. Set the network speed to “Fast 3G” in the dev tools Network tab,
+// // otherwise images load too fast
 
-// GOOD LUCK �
+// // GOOD LUCK �
 
-const wait = function (seconds) {
-  return new Promise(function (resolve) {
-    setTimeout(resolve, seconds * 1000);
-  });
-};
+// const wait = function (seconds) {
+//   return new Promise(function (resolve) {
+//     setTimeout(resolve, seconds * 1000);
+//   });
+// };
 
-const imgContainer = document.querySelector('.images');
+// const imgContainer = document.querySelector('.images');
 
-const createImage = function (imgPath) {
+// const createImage = function (imgPath) {
+//   return new Promise(function (resolve, reject) {
+//     const img = document.createElement('img');
+//     img.src = imgPath;
+
+//     img.addEventListener('load', function () {
+//       imgContainer.append(img);
+//       resolve(img);
+//     });
+
+//     img.addEventListener('error', function () {
+//       reject(new Error('Image not found'));
+//     });
+//   });
+// };
+
+// let currentImg;
+
+// createImage('img/img-1.jpg')
+//   .then(img => {
+//     currentImg = img;
+//     console.log('Image 1 loaded');
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImg.style.display = 'none';
+
+//     return createImage('img/img-2.jpg');
+//   })
+//   .then(img => {
+//     currentImg = img;
+//     console.log('Image 2 loaded');
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImg.style.display = 'none';
+
+//     return createImage('img/img-3.jpg');
+//   })
+//   .then(img => {
+//     currentImg = img;
+//     console.log('Image 3 loaded');
+//     return wait(2);
+//   })
+//   .catch(err => console.error(err));
+
+/////////////////////////////////////////////////////////////////
+// Consuming Promises with Async/Await
+/////////////////////////////////////////////////////////////////
+
+// // And we do this by simply adding
+// // async here in front of the function.
+// // And so this function is now an asynchronous function.
+// // So a function that will basically keep running in the
+// // background while performing the code that inside of it,
+// // then when this function is done,
+// // it automatically returns a promise,
+// const whereAmI = async function (country) {
+//   //   we can use the await keyword to basically await for the
+//   // result of this premise.
+//   // So basically await will stop decode execution at this
+//   // point of the function until the premise is fulfilled.
+//   // And so until the data has been fetched in this case,
+
+//   // but now after that explanation,
+//   // you might think isn't stopping the code,
+//   // blocking the execution?
+//   // Well, that's a really good question,
+//   // but the answer is actually no, in this case,
+//   // because stopping execution in an a sync function,
+//   // which is what we have here is actually not a problem because
+//   // this function is running asynchronously in the background.
+//   // And so therefore it is not blocking the main threat of
+//   // execution.
+//   // So it's not blocking the call stack. And in fact, that's,
+//   // what's so special about a single wait.
+//   // So it's the fact that it makes our code look like regular
+//   // synchronous code while behind the scenes.
+//   // Everything is in fact asynchronous.
+
+//   // So you see here that by using a sync await
+//   // or asynchronous
+//   // code here, Oh,
+//   // really looks and feels like synchronous code.
+//   // So we can simply await until the value of the premise is
+//   // returned basically.
+//   // And then just assign that value to a variable meant that is
+//   // something that was impossible before.
+//   // So before we had to mess with callback functions and dead
+//   // was true in callback hell,
+//   // but also by consuming premises with the then method.
+//   // But now with a sync await, that is just completely gone,
+
+//   // this looks now like normal synchronous code where we simply
+//   // assign values to a variable,
+//   // and that makes it so much easier and more clean.
+//   // In my opinion.
+//   const res = await fetch(
+//     `https://countries-api-836d.onrender.com/countries/name/${country}`
+//   );
+//   console.log(res);
+
+//   // Now, before you start using a sync await all
+//   // over the place,
+//   // you need to first understand that a sink await is in fact,
+//   // simply syntactic sugar over the then method in premises.
+//   // So of course behind the scenes, we are still using premises.
+//   // We are simply using a different way of consuming them here
+//   // in this case, but what we have here.
+//   // So this is essentially exactly the same
+//   // as doing
+//   // it the old way,
+//   // basically.
+//   // So using then and then res
+//   // and then console dot log res
+//   // like we did here.
+//   // So this is exactly the same.
+//   // OLD ONE
+//   // fetch(
+//   //   `https://countries-api-836d.onrender.com/countries/name/${country}`
+//   // ).then(res => console.log(res));
+// };
+
+// whereAmI('portugal');
+// console.log('FIRST');
+
+///=====
+
+const getPosition = function () {
   return new Promise(function (resolve, reject) {
-    const img = document.createElement('img');
-    img.src = imgPath;
-
-    img.addEventListener('load', function () {
-      imgContainer.append(img);
-      resolve(img);
-    });
-
-    img.addEventListener('error', function () {
-      reject(new Error('Image not found'));
-    });
+    navigator.geolocation.getCurrentPosition(resolve, reject);
   });
 };
 
-let currentImg;
+// So now that we know how a sync await works,
+// it's time to actually recreate the, where am I a function?
+// So first off we need to get the Jason out
+// of this response,
+// we need to call Jason
+// and remember that this itself returns
+// a new premise.
+// And so previously we would have to return this premise
+// and then chain another then handler.
+const whereAmI2 = async function () {
+  // Geolocation
+  const pos = await getPosition();
+  const { latitude: lat, longitude: lng } = pos.coords;
 
-createImage('img/img-1.jpg')
-  .then(img => {
-    currentImg = img;
-    console.log('Image 1 loaded');
-    return wait(2);
-  })
-  .then(() => {
-    currentImg.style.display = 'none';
+  //=====Reverse geocoding====
+  //   And so now again,
+  // it becomes a lot easier to basically chain premises
+  // because we don't have to return anything.
+  // We don't have to create new then methods and
+  // we don't have to create new callback functions.
+  // So all we have to do is to await this and
+  // store the results into some variable.
+  const resGeo = await fetch(
+    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
+  );
 
-    return createImage('img/img-2.jpg');
-  })
-  .then(img => {
-    currentImg = img;
-    console.log('Image 2 loaded');
-    return wait(2);
-  })
-  .then(() => {
-    currentImg.style.display = 'none';
+  const dataGeo = await resGeo.json();
+  console.log(dataGeo);
+  console.log(dataGeo.countryName);
 
-    return createImage('img/img-3.jpg');
-  })
-  .then(img => {
-    currentImg = img;
-    console.log('Image 3 loaded');
-    return wait(2);
-  })
-  .catch(err => console.error(err));
+  // Country data
+  const res = await fetch(
+    `https://countries-api-836d.onrender.com/countries/name/${dataGeo.countryName}`
+  );
+
+  //   But now this becomes so much easier.
+  // All we have to do is to, again,
+  // await this and then we can store
+  // the results directly into the data
+  // variable that we have been using before.
+
+  //   And all without de-chaining of promises like we had before.
+  // So this is really elegant. One more time,
+  // simply being able to essentially store the fulfilled promise
+  // value immediately into a variable without having to mess
+  // with callback functions now. Okay.
+  const data = await res.json();
+  console.log(data);
+  renderCountry(data[0]);
+};
+
+whereAmI2();
+
+// And so we now have all of this in one nice a sync function
+// that runs behind the scenes until everything here is
+// finished.
+// So we are awaiting here one, two, three, four,
+// five promises
+// in a very easy way.
+// And code that now actually looks and feels like normal
+// synchronous code.
+// So to me personally,
+// this a sync await feature was really a huge,
+// huge addition to the JavaScript language.
+// Now, again,
+// just keep in mind that a sync await is just synthetic sugar
+// over consuming promises.
+// So it's a bit like classes in JavaScript,
+// which also hides the true nature of how things work behind
+// the scenes.
+// But I think that's no problem.
+// At least if you already know exactly how promises
+// and asynchronous JavaScript actually do work
+// behind the scenes.
+// And we spent a lot of time in this section
+// learning all that.
+// And so I'm sure that you will be fine.
+// Also a sync await is actually used a lot together with the
+// more traditional then method of consuming pr0mises
