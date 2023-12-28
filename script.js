@@ -1232,83 +1232,189 @@ const renderError = function (msg) {
 // Consuming Promises with Async/Await
 /////////////////////////////////////////////////////////////////
 
-// // And we do this by simply adding
-// // async here in front of the function.
-// // And so this function is now an asynchronous function.
-// // So a function that will basically keep running in the
-// // background while performing the code that inside of it,
-// // then when this function is done,
-// // it automatically returns a promise,
-// const whereAmI = async function (country) {
-//   //   we can use the await keyword to basically await for the
-//   // result of this premise.
-//   // So basically await will stop decode execution at this
-//   // point of the function until the premise is fulfilled.
-//   // And so until the data has been fetched in this case,
+// // // And we do this by simply adding
+// // // async here in front of the function.
+// // // And so this function is now an asynchronous function.
+// // // So a function that will basically keep running in the
+// // // background while performing the code that inside of it,
+// // // then when this function is done,
+// // // it automatically returns a promise,
+// // const whereAmI = async function (country) {
+// //   //   we can use the await keyword to basically await for the
+// //   // result of this premise.
+// //   // So basically await will stop decode execution at this
+// //   // point of the function until the premise is fulfilled.
+// //   // And so until the data has been fetched in this case,
 
-//   // but now after that explanation,
-//   // you might think isn't stopping the code,
-//   // blocking the execution?
-//   // Well, that's a really good question,
-//   // but the answer is actually no, in this case,
-//   // because stopping execution in an a sync function,
-//   // which is what we have here is actually not a problem because
-//   // this function is running asynchronously in the background.
-//   // And so therefore it is not blocking the main threat of
-//   // execution.
-//   // So it's not blocking the call stack. And in fact, that's,
-//   // what's so special about a single wait.
-//   // So it's the fact that it makes our code look like regular
-//   // synchronous code while behind the scenes.
-//   // Everything is in fact asynchronous.
+// //   // but now after that explanation,
+// //   // you might think isn't stopping the code,
+// //   // blocking the execution?
+// //   // Well, that's a really good question,
+// //   // but the answer is actually no, in this case,
+// //   // because stopping execution in an a sync function,
+// //   // which is what we have here is actually not a problem because
+// //   // this function is running asynchronously in the background.
+// //   // And so therefore it is not blocking the main threat of
+// //   // execution.
+// //   // So it's not blocking the call stack. And in fact, that's,
+// //   // what's so special about a single wait.
+// //   // So it's the fact that it makes our code look like regular
+// //   // synchronous code while behind the scenes.
+// //   // Everything is in fact asynchronous.
 
-//   // So you see here that by using a sync await
-//   // or asynchronous
-//   // code here, Oh,
-//   // really looks and feels like synchronous code.
-//   // So we can simply await until the value of the premise is
-//   // returned basically.
-//   // And then just assign that value to a variable meant that is
-//   // something that was impossible before.
-//   // So before we had to mess with callback functions and dead
-//   // was true in callback hell,
-//   // but also by consuming premises with the then method.
-//   // But now with a sync await, that is just completely gone,
+// //   // So you see here that by using a sync await
+// //   // or asynchronous
+// //   // code here, Oh,
+// //   // really looks and feels like synchronous code.
+// //   // So we can simply await until the value of the premise is
+// //   // returned basically.
+// //   // And then just assign that value to a variable meant that is
+// //   // something that was impossible before.
+// //   // So before we had to mess with callback functions and dead
+// //   // was true in callback hell,
+// //   // but also by consuming premises with the then method.
+// //   // But now with a sync await, that is just completely gone,
 
-//   // this looks now like normal synchronous code where we simply
-//   // assign values to a variable,
-//   // and that makes it so much easier and more clean.
-//   // In my opinion.
-//   const res = await fetch(
-//     `https://countries-api-836d.onrender.com/countries/name/${country}`
-//   );
-//   console.log(res);
+// //   // this looks now like normal synchronous code where we simply
+// //   // assign values to a variable,
+// //   // and that makes it so much easier and more clean.
+// //   // In my opinion.
+// //   const res = await fetch(
+// //     `https://countries-api-836d.onrender.com/countries/name/${country}`
+// //   );
+// //   console.log(res);
 
-//   // Now, before you start using a sync await all
-//   // over the place,
-//   // you need to first understand that a sink await is in fact,
-//   // simply syntactic sugar over the then method in premises.
-//   // So of course behind the scenes, we are still using premises.
-//   // We are simply using a different way of consuming them here
-//   // in this case, but what we have here.
-//   // So this is essentially exactly the same
-//   // as doing
-//   // it the old way,
-//   // basically.
-//   // So using then and then res
-//   // and then console dot log res
-//   // like we did here.
-//   // So this is exactly the same.
-//   // OLD ONE
-//   // fetch(
-//   //   `https://countries-api-836d.onrender.com/countries/name/${country}`
-//   // ).then(res => console.log(res));
+// //   // Now, before you start using a sync await all
+// //   // over the place,
+// //   // you need to first understand that a sink await is in fact,
+// //   // simply syntactic sugar over the then method in premises.
+// //   // So of course behind the scenes, we are still using premises.
+// //   // We are simply using a different way of consuming them here
+// //   // in this case, but what we have here.
+// //   // So this is essentially exactly the same
+// //   // as doing
+// //   // it the old way,
+// //   // basically.
+// //   // So using then and then res
+// //   // and then console dot log res
+// //   // like we did here.
+// //   // So this is exactly the same.
+// //   // OLD ONE
+// //   // fetch(
+// //   //   `https://countries-api-836d.onrender.com/countries/name/${country}`
+// //   // ).then(res => console.log(res));
+// // };
+
+// // whereAmI('portugal');
+// // console.log('FIRST');
+
+// ///=====
+
+// const getPosition = function () {
+//   return new Promise(function (resolve, reject) {
+//     navigator.geolocation.getCurrentPosition(resolve, reject);
+//   });
 // };
 
-// whereAmI('portugal');
-// console.log('FIRST');
+// // So now that we know how a sync await works,
+// // it's time to actually recreate the, where am I a function?
+// // So first off we need to get the Jason out
+// // of this response,
+// // we need to call Jason
+// // and remember that this itself returns
+// // a new premise.
+// // And so previously we would have to return this premise
+// // and then chain another then handler.
+// const whereAmI2 = async function () {
+//   // Geolocation
+//   const pos = await getPosition();
+//   const { latitude: lat, longitude: lng } = pos.coords;
 
-///=====
+//   //=====Reverse geocoding====
+//   //   And so now again,
+//   // it becomes a lot easier to basically chain premises
+//   // because we don't have to return anything.
+//   // We don't have to create new then methods and
+//   // we don't have to create new callback functions.
+//   // So all we have to do is to await this and
+//   // store the results into some variable.
+//   const resGeo = await fetch(
+//     `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
+//   );
+
+//   const dataGeo = await resGeo.json();
+//   console.log(dataGeo);
+//   console.log(dataGeo.countryName);
+
+//   // Country data
+//   const res = await fetch(
+//     `https://countries-api-836d.onrender.com/countries/name/${dataGeo.countryName}`
+//   );
+
+//   //   But now this becomes so much easier.
+//   // All we have to do is to, again,
+//   // await this and then we can store
+//   // the results directly into the data
+//   // variable that we have been using before.
+
+//   //   And all without de-chaining of promises like we had before.
+//   // So this is really elegant. One more time,
+//   // simply being able to essentially store the fulfilled promise
+//   // value immediately into a variable without having to mess
+//   // with callback functions now. Okay.
+//   const data = await res.json();
+//   console.log(data);
+//   renderCountry(data[0]);
+// };
+
+// whereAmI2();
+
+// // And so we now have all of this in one nice a sync function
+// // that runs behind the scenes until everything here is
+// // finished.
+// // So we are awaiting here one, two, three, four,
+// // five promises
+// // in a very easy way.
+// // And code that now actually looks and feels like normal
+// // synchronous code.
+// // So to me personally,
+// // this a sync await feature was really a huge,
+// // huge addition to the JavaScript language.
+// // Now, again,
+// // just keep in mind that a sync await is just synthetic sugar
+// // over consuming promises.
+// // So it's a bit like classes in JavaScript,
+// // which also hides the true nature of how things work behind
+// // the scenes.
+// // But I think that's no problem.
+// // At least if you already know exactly how promises
+// // and asynchronous JavaScript actually do work
+// // behind the scenes.
+// // And we spent a lot of time in this section
+// // learning all that.
+// // And so I'm sure that you will be fine.
+// // Also a sync await is actually used a lot together with the
+// // more traditional then method of consuming pr0mises
+
+///////////////////////////////////////////////////////////////////
+// Error Handling With try...catch
+// ///////////////////////////////////////////////////////////////////
+// So try catch has nothing to do with async/await.
+// But we can still use it to catch errors in async functions.
+
+// But anyway, this year is just a stupid syntax error.
+// And of course, we're not going to use try catch
+// to find mistakes that we make in our code.
+// And so let's know use try catch for something more useful,
+// which is to actually handle real errors in async functions.
+// try {
+//   let y = 1;
+//   const x = 2;
+// //  x = 3;
+//   y = 3;
+// } catch (err) {
+//   alert(err.message);
+// }
 
 const getPosition = function () {
   return new Promise(function (resolve, reject) {
@@ -1316,82 +1422,43 @@ const getPosition = function () {
   });
 };
 
-// So now that we know how a sync await works,
-// it's time to actually recreate the, where am I a function?
-// So first off we need to get the Jason out
-// of this response,
-// we need to call Jason
-// and remember that this itself returns
-// a new premise.
-// And so previously we would have to return this premise
-// and then chain another then handler.
-const whereAmI2 = async function () {
-  // Geolocation
-  const pos = await getPosition();
-  const { latitude: lat, longitude: lng } = pos.coords;
+const whereAmI = async function () {
+  try {
+    // Geolocation
+    const pos = await getPosition();
+    const { latitude: lat, longitude: lng } = pos.coords;
 
-  //=====Reverse geocoding====
-  //   And so now again,
-  // it becomes a lot easier to basically chain premises
-  // because we don't have to return anything.
-  // We don't have to create new then methods and
-  // we don't have to create new callback functions.
-  // So all we have to do is to await this and
-  // store the results into some variable.
-  const resGeo = await fetch(
-    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
-  );
+    // Reverse geocoding .
+    const resGeo = await fetch(
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
+    );
 
-  const dataGeo = await resGeo.json();
-  console.log(dataGeo);
-  console.log(dataGeo.countryName);
+    if (!resGeo.ok) throw new Error('Problem getting location data');
 
-  // Country data
-  const res = await fetch(
-    `https://countries-api-836d.onrender.com/countries/name/${dataGeo.countryName}`
-  );
+    const dataGeo = await resGeo.json();
+    console.log(dataGeo);
+    console.log(dataGeo.countryName);
 
-  //   But now this becomes so much easier.
-  // All we have to do is to, again,
-  // await this and then we can store
-  // the results directly into the data
-  // variable that we have been using before.
+    // Country data
+    const res = await fetch(
+      `https://countries-api-836d.onrender.com/countries/name/${dataGeo.countryName}`
+    );
 
-  //   And all without de-chaining of promises like we had before.
-  // So this is really elegant. One more time,
-  // simply being able to essentially store the fulfilled promise
-  // value immediately into a variable without having to mess
-  // with callback functions now. Okay.
-  const data = await res.json();
-  console.log(data);
-  renderCountry(data[0]);
+    if (!res.ok) throw new Error('Problem getting country');
+
+    const data = await res.json();
+    console.log(data);
+    renderCountry(data[0]);
+  } catch (err) {
+    console.log(`${err} 💥`);
+    renderError(`💥 ${err.message}`);
+  }
 };
 
-whereAmI2();
+whereAmI();
 
-// And so we now have all of this in one nice a sync function
-// that runs behind the scenes until everything here is
-// finished.
-// So we are awaiting here one, two, three, four,
-// five promises
-// in a very easy way.
-// And code that now actually looks and feels like normal
-// synchronous code.
-// So to me personally,
-// this a sync await feature was really a huge,
-// huge addition to the JavaScript language.
-// Now, again,
-// just keep in mind that a sync await is just synthetic sugar
-// over consuming promises.
-// So it's a bit like classes in JavaScript,
-// which also hides the true nature of how things work behind
-// the scenes.
-// But I think that's no problem.
-// At least if you already know exactly how promises
-// and asynchronous JavaScript actually do work
-// behind the scenes.
-// And we spent a lot of time in this section
-// learning all that.
-// And so I'm sure that you will be fine.
-// Also a sync await is actually used a lot together with the
-// more traditional then method of consuming pr0mises
+// So again, please never ignore handling errors,
+// especially when it comes to asynchronous code
+// like this one, because here,
+// there is always a lot of stuff that can go wrong.
+// And so our application needs to be ready to handle that.
