@@ -28,6 +28,14 @@ const renderError = function (msg) {
   countriesContainer.style.opacity = 1;
 };
 
+const getJson = function (url, errorMsg = 'Something went wrong') {
+  return fetch(url).then(response => {
+    if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
+
+    return response.json();
+  });
+};
+
 ///////////////////////////////////////
 
 ////////////////////////////////////////////////////////
@@ -1467,142 +1475,225 @@ const renderError = function (msg) {
 // Returning Values from Async Functions
 ////////////////////////////////////////////////////////////////////
 
-// At this point,
-// we have a pretty good idea
-// of how to work with async/await, right?
-// However, there is one important thing missing.
-// So right now, it might still be a little bit unclear
-// what an async function actually is and how it works.
+// // At this point,
+// // we have a pretty good idea
+// // of how to work with async/await, right?
+// // However, there is one important thing missing.
+// // So right now, it might still be a little bit unclear
+// // what an async function actually is and how it works.
 
-const getPosition = function () {
-  return new Promise(function (resolve, reject) {
-    navigator.geolocation.getCurrentPosition(resolve, reject);
-  });
-};
+// const getPosition = function () {
+//   return new Promise(function (resolve, reject) {
+//     navigator.geolocation.getCurrentPosition(resolve, reject);
+//   });
+// };
 
-const whereAmI = async function () {
+// const whereAmI = async function () {
+//   try {
+//     // Geolocation
+//     const pos = await getPosition();
+//     const { latitude: lat, longitude: lng } = pos.coords;
+
+//     // Reverse geocoding .
+//     const resGeo = await fetch(
+//       `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
+//     );
+
+//     if (!resGeo.ok) throw new Error('Problem getting location data');
+
+//     const dataGeo = await resGeo.json();
+
+//     // Country data
+//     const res = await fetch(
+//       `https://countries-api-836d.onrender.com/countries/name/${dataGeo.countryName}`
+//     );
+
+//     if (!res.ok) throw new Error('Problem getting country');
+
+//     const data = await res.json();
+//     renderCountry(data[0]);
+
+//     return `You are in ${dataGeo.city}, ${dataGeo.countryName}`;
+//   } catch (err) {
+//     renderError(`💥 ${err.message}`);
+
+//     // Reject promise returned from async function
+//     throw err;
+//   }
+// };
+
+// console.log('1: Will get location');
+
+// // told you that an async function always returns a promise.
+// // The reason for that is that at this point of the code,
+// // JavaScript has simply no way of knowing yet
+// // there's a string here that we want
+// // because the function is still running,
+// // but it is also not blocking the code out here.
+// // And so therefore again, at this point,
+// // JavaScript has no way of knowing
+// // what will be returned from this function.
+// // And so therefore all that this function does return
+// // is a promise.
+// // Now the value that we return from an async function,
+// // so again, that's this string here
+// // will become the fulfilled value of the promise
+// // that is returned by the function.
+// // // And so that's important to understandn here,
+// // the fulfilled value of that promise
+// // is going to be this string here,
+// // because that is the value that we return
+// // from the async function
+// // while at least if there is no error here happening
+// // in the function,
+// // but for now, let's assume the success here again..
+// // So again, this promise that we see dow
+
+// // but of course this one here didn't work,
+// // const city = whereAmI();
+// // console.log(city);
+
+// // but here it is going to work.
+// // Because again, in the then handler,
+// // this argument that will be passed into the callback function
+// // is going to be the result value of the promise.
+
+// // whereAmI()
+// //   .then(city => console.log(`2: ${city}`))
+// //   .catch(err => console.log(`2: ${err.message} 💥`))
+// //   .finally(() => console.log('3: Finished getting location'));
+
+// //   Now this of course works just fine, but in my opinion,
+// // there's still a problem here.
+// // And that problem is the fact that doing this here
+// // kind of makes this the philosophy of async/await
+// // with handling promises using then and catch, right?
+// // So we are mixing the old
+// // and the new way of working with promises here,
+// // all in the same code.
+// // And that's something that I personally don't like.
+// // So I prefer to always just use async functions
+// // instead of having to mix them.
+// // And so let's now go ahead
+// // and convert this to async/await as well.
+
+// // Now it would be great if we could simply use await
+// // without the async function,
+// // but that doesn't really work, at least for now,
+// // because there is actually a proposal in the works
+// // to make this happen, but for now,
+// // await can only be used inside an async function.
+// // However, we don't really want a new complete function here,
+// // and so instead we can use an IIFE.
+// // So remember IIFEs from way back,
+// // they are immediately-invoked function expressions.
+// (async function () {
+//   try {
+//     const city = await whereAmI();
+//     console.log(`2: ${city}`);
+//   } catch (err) {
+//     console.log(`2: ${err.message} 💥`);
+//   }
+
+//   console.log('3: Finished getting location');
+// })();
+
+// // We managed to do the conversion
+// // and now everything is using async/await.
+// // And so that's much nicer.
+// // And now we know how to basically return data
+// // from an async function
+// // and how to properly receive and handle that returned data.
+// // Right?
+
+// // And actually in the real life,
+// // this is something that happens all the time.
+// // So it's pretty common that we have async functions
+// // calling other async functions
+// // and returning values between them.
+// // And so that's the reason why I'm showing you all this.
+// // To make sure that you really correctly understand
+// // how async functions work behind the scenes.
+
+//////////////////////////////////////////////////////////////
+// Running Promises in Parallel
+//////////////////////////////////////////////////////////////
+
+const get3Countries = async function (c1, c2, c3) {
   try {
-    // Geolocation
-    const pos = await getPosition();
-    const { latitude: lat, longitude: lng } = pos.coords;
+    //     But if we think about what we did here,
+    // then maybe it actually doesn't make so much sense
+    // because what we did here basically
+    // was to run all these Ajax calls one after another,
+    // even though the result of the second one here
+    // does not depend on the first one,
+    // and the result of the third one
+    // does also not depend on any of the other ones.
+    // And so actually this doesn't make much sense.
+    // Why should the second Ajax call wait for the first one?
+    // const [data1] = await getJson(
+    //   `https://countries-api-836d.onrender.com/countries/name/${c1}`
+    // );
+    // const [data2] = await getJson(
+    //   `https://countries-api-836d.onrender.com/countries/name/${c2}`
+    // );
+    // const [data3] = await getJson(
+    //   `https://countries-api-836d.onrender.com/countries/name/${c3}`
+    // );
+    // console.log([data1.capital, data2.capital, data3.capital]);
 
-    // Reverse geocoding .
-    const resGeo = await fetch(
-      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
-    );
+    //     And so this is once again,
+    // kind of a helper function on this promise constructor.
+    // So it's a static method, right?
+    // Now, this function here takes in an array of promises,
+    // and it will return a new promise,
+    // which will then run all the promises
+    // in the array at the same time.
+    const data = await Promise.all([
+      getJson(`https://countries-api-836d.onrender.com/countries/name/${c1}`),
+      getJson(`https://countries-api-836d.onrender.com/countries/name/${c2}`),
+      getJson(`https://countries-api-836d.onrender.com/countries/name/${c3}`),
+    ]);
 
-    if (!resGeo.ok) throw new Error('Problem getting location data');
+    //     because remember that we want to actually return an array,
+    // but not this array,
+    // but simply an array with all the capital cities.
+    console.log(data.map(d => d[0].capital));
 
-    const dataGeo = await resGeo.json();
-
-    // Country data
-    const res = await fetch(
-      `https://countries-api-836d.onrender.com/countries/name/${dataGeo.countryName}`
-    );
-
-    if (!res.ok) throw new Error('Problem getting country');
-
-    const data = await res.json();
-    renderCountry(data[0]);
-
-    return `You are in ${dataGeo.city}, ${dataGeo.countryName}`;
-  } catch (err) {
-    renderError(`💥 ${err.message}`);
-
-    // Reject promise returned from async function
-    throw err;
+    // just one thing
+    // that's also very important to mention here
+    // is that if one of the promises rejects,
+    // then the whole promise.all actually rejects as well.
+    // So we say that promise.all short circuits
+    // when one promise rejects.
+    // So again, because one rejected promise
+    // is enough for the entire thing to reject as well.
+  } catch (error) {
+    console.error(error);
   }
 };
 
-console.log('1: Will get location');
+get3Countries('usa', 'Spain', 'Germany');
 
-// told you that an async function always returns a promise.
-// The reason for that is that at this point of the code,
-// JavaScript has simply no way of knowing yet
-// there's a string here that we want
-// because the function is still running,
-// but it is also not blocking the code out here.
-// And so therefore again, at this point,
-// JavaScript has no way of knowing
-// what will be returned from this function.
-// And so therefore all that this function does return
-// is a promise.
-// Now the value that we return from an async function,
-// so again, that's this string here
-// will become the fulfilled value of the promise
-// that is returned by the function.
-// // And so that's important to understandn here,
-// the fulfilled value of that promise
-// is going to be this string here,
-// because that is the value that we return
-// from the async function
-// while at least if there is no error here happening
-// in the function,
-// but for now, let's assume the success here again..
-// So again, this promise that we see dow
+// Great, so whenever you have a situation
+// in which you need to do multiple asynchronous operations
+// at the same time,
+// and operations that don't depend on one another,
+// then you should always, always run them in parallel,
+// just like we did here using promise.all.
 
-// but of course this one here didn't work,
-// const city = whereAmI();
-// console.log(city);
+// And this is actually more common than you might think.
+// And so please keep this technique in mind
+// because your users will thank you.
 
-// but here it is going to work.
-// Because again, in the then handler,
-// this argument that will be passed into the callback function
-// is going to be the result value of the promise.
-
-// whereAmI()
-//   .then(city => console.log(`2: ${city}`))
-//   .catch(err => console.log(`2: ${err.message} 💥`))
-//   .finally(() => console.log('3: Finished getting location'));
-
-//   Now this of course works just fine, but in my opinion,
-// there's still a problem here.
-// And that problem is the fact that doing this here
-// kind of makes this the philosophy of async/await
-// with handling promises using then and catch, right?
-// So we are mixing the old
-// and the new way of working with promises here,
-// all in the same code.
-// And that's something that I personally don't like.
-// So I prefer to always just use async functions
-// instead of having to mix them.
-// And so let's now go ahead
-// and convert this to async/await as well.
-
-// Now it would be great if we could simply use await
-// without the async function,
-// but that doesn't really work, at least for now,
-// because there is actually a proposal in the works
-// to make this happen, but for now,
-// await can only be used inside an async function.
-// However, we don't really want a new complete function here,
-// and so instead we can use an IIFE.
-// So remember IIFEs from way back,
-// they are immediately-invoked function expressions.
-(async function () {
-  try {
-    const city = await whereAmI();
-    console.log(`2: ${city}`);
-  } catch (err) {
-    console.log(`2: ${err.message} 💥`);
-  }
-
-  console.log('3: Finished getting location');
-})();
-
-// We managed to do the conversion
-// and now everything is using async/await.
-// And so that's much nicer.
-// And now we know how to basically return data
-// from an async function
-// and how to properly receive and handle that returned data.
-// Right?
-
-// And actually in the real life,
-// this is something that happens all the time.
-// So it's pretty common that we have async functions
-// calling other async functions
-// and returning values between them.
-// And so that's the reason why I'm showing you all this.
-// To make sure that you really correctly understand
-// how async functions work behind the scenes.
+// And of course,
+// just in case you're not using a single weight,
+// you can, of course also take this result here
+// and then handle it with the then method.
+// So that's gonna work just exactly the same
+// as here with a single weight.
+// Okay, and that's the promise.all combinator.
+// So it's called a combinator function
+// because it allows us to combine multiple promises.
+// And there are actually other combinator functions,
+// and so let's take a look at them right in the next video.
