@@ -1011,117 +1011,219 @@ const renderError = function (msg) {
 // Promisifying the Geolocation
 //////////////////////////////////////////////////////////////////
 
-// we're gonna promisify the geolocation API,
-// and this is gonna be really cool
-// because it will allow us to take the small app
-// that we built in the last coding challenge
-// to the next level.
-// Now we used the geolocation API before,
-// and so let's start by reviewing how it works.
-// So remember we use navigator
-// .geolocation.getcurrentposition,
-// and then this function here accepts two callbacks
-// where the first is for the success
-// and the second one is for the error.
+// // we're gonna promisify the geolocation API,
+// // and this is gonna be really cool
+// // because it will allow us to take the small app
+// // that we built in the last coding challenge
+// // to the next level.
+// // Now we used the geolocation API before,
+// // and so let's start by reviewing how it works.
+// // So remember we use navigator
+// // .geolocation.getcurrentposition,
+// // and then this function here accepts two callbacks
+// // where the first is for the success
+// // and the second one is for the error.
 
-navigator.geolocation.getCurrentPosition(
-  position => console.log(position),
-  err => console.log(err)
-);
+// navigator.geolocation.getCurrentPosition(
+//   position => console.log(position),
+//   err => console.log(err)
+// );
 
-// this is actually asynchronous behavior
-// in exactly the way that we have been talking about.
+// // this is actually asynchronous behavior
+// // in exactly the way that we have been talking about.
 
-console.log('Getting position');
+// console.log('Getting position');
 
-// and so this is another great opportunity
-// to promisify a callback based API, to a promise based API.
-const getPosition = function () {
-  return new Promise(function (resolve, reject) {
-    // navigator.geolocation.getCurrentPosition(
-    //   position => resolve(position), //success
-    //   err => reject(err)
-    // );
-    //================
-    //     So this is exactly the same as this one here.
-    // So before we specified the callback manually like this,
-    // but all we did was to take the position
-    // and pass it down into resolve,
-    // but here that now happens automatically.
-    // So now resolve itself is the callback function,
-    // which will get called with the position,
-    navigator.geolocation.getCurrentPosition(resolve, reject);
+// // and so this is another great opportunity
+// // to promisify a callback based API, to a promise based API.
+// const getPosition = function () {
+//   return new Promise(function (resolve, reject) {
+//     // navigator.geolocation.getCurrentPosition(
+//     //   position => resolve(position), //success
+//     //   err => reject(err)
+//     // );
+//     //================
+//     //     So this is exactly the same as this one here.
+//     // So before we specified the callback manually like this,
+//     // but all we did was to take the position
+//     // and pass it down into resolve,
+//     // but here that now happens automatically.
+//     // So now resolve itself is the callback function,
+//     // which will get called with the position,
+//     navigator.geolocation.getCurrentPosition(resolve, reject);
+//   });
+// };
+// // getPosition().then(pos => console.log(pos));
+
+// ///=====
+// // but now let's actually take it to the next level.
+// // So remember how in the last coding challenge,
+// // we built a function which received GPS coordinates
+// // as an input, and then rendered the corresponding country.
+// // Well, now we actually got these coordinates via geolocation
+// // and so we don't even have to pass in any coordinates
+// // into that function.
+
+// // but now since we have this get positioned function,
+// // we actually no longer need to even pass in
+// // these coordinates
+// // and so now we're gonna be able to build a function
+// // that will tell us where we are in the world,
+// // simply based on the geolocation of our device.
+// // const whereAmI = function (lat, lng) {
+
+// const whereAmI = function () {
+//   getPosition()
+//     .then(pos => {
+//       // console.log(pos.coords);
+//       const { latitude: lat, longitude: lng } = pos.coords;
+
+//       return fetch(
+//         `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
+//       );
+//     })
+//     .then(response => {
+//       if (!response.ok)
+//         throw new Error(`Problem with geocoding ${response.status}`);
+
+//       return response.json();
+//     })
+//     .then(data => {
+//       console.log(`You are in ${data.city}, ${data.countryName}`);
+
+//       return fetch(
+//         `https://countries-api-836d.onrender.com/countries/name/${data.countryName}`
+//       );
+//     })
+//     .then(response => {
+//       if (!response.ok)
+//         throw new Error(`Country not found (${response.status})`);
+
+//       return response.json();
+//     })
+//     .then(data => {
+//       renderCountry(data[0]);
+//     })
+//     .catch(err => console.error(`${err.message}`));
+// };
+
+// btn.addEventListener('click', whereAmI);
+
+// // Now, just imagine that you would have to handle
+// // all of these asynchronous operations here
+// // using callback function.
+// // So that would literally be hell.
+// // So therefore the name callback hell,
+
+// // but again, with this,
+// // we have a really nice flat chain of promises
+// // that's easy to handle and also easy to manage.
+// // Now.
+
+// // But anyway, with this, we saw that We can really promisify
+// // all kinds of asynchronous stuff in JavaScript.
+// // For example, we could also promisify,
+// // the old XML HTTP request function
+// // that we used in the beginning to make Ajax calls,
+
+////////////////////////////////////////////////////////////////////
+// Coding Challenge #2
+////////////////////////////////////////////////////////////////////
+
+// For this challenge you will actually have to watch the video! Then, build the image
+// loading functionality that I just showed you on the screen.
+
+// Your tasks:
+
+// Tasks are not super-descriptive this time, so that you can figure out some stuff by
+// yourself. Pretend you're working on your own �
+
+// PART 1
+
+// 1. Create a function 'createImage' which receives 'imgPath' as an input.
+// This function returns a promise which creates a new image (use
+// document.createElement('img')) and sets the .src attribute to the
+// provided image path
+
+// 2. When the image is done loading, append it to the DOM element with the
+// 'images' class, and resolve the promise. The fulfilled value should be the
+// image element itself. In case there is an error loading the image (listen for
+// the'error' event), reject the promise
+
+// 3. If this part is too tricky for you, just watch the first part of the solution
+
+// PART 2
+
+// 4. Consume the promise using .then and also add an error handler
+
+// 5. After the image has loaded, pause execution for 2 seconds using the 'wait'
+// function we created earlier
+
+// 6. After the 2 seconds have passed, hide the current image (set display CSS
+// property to 'none'), and load a second image (Hint: Use the image element
+// returned by the 'createImage' promise to hide the current image. You will
+// need a global variable for that �)
+
+// 7. After the second image has loaded, pause execution for 2 seconds again
+
+// 8. After the 2 seconds have passed, hide the current image
+
+// Test data: Images in the img folder. Test the error handler by passing a wrong
+// image path. Set the network speed to “Fast 3G” in the dev tools Network tab,
+// otherwise images load too fast
+
+// GOOD LUCK �
+
+const wait = function (seconds) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, seconds * 1000);
   });
 };
-// getPosition().then(pos => console.log(pos));
 
-///=====
-// but now let's actually take it to the next level.
-// So remember how in the last coding challenge,
-// we built a function which received GPS coordinates
-// as an input, and then rendered the corresponding country.
-// Well, now we actually got these coordinates via geolocation
-// and so we don't even have to pass in any coordinates
-// into that function.
+const imgContainer = document.querySelector('.images');
 
-// but now since we have this get positioned function,
-// we actually no longer need to even pass in
-// these coordinates
-// and so now we're gonna be able to build a function
-// that will tell us where we are in the world,
-// simply based on the geolocation of our device.
-// const whereAmI = function (lat, lng) {
+const createImage = function (imgPath) {
+  return new Promise(function (resolve, reject) {
+    const img = document.createElement('img');
+    img.src = imgPath;
 
-const whereAmI = function () {
-  getPosition()
-    .then(pos => {
-      // console.log(pos.coords);
-      const { latitude: lat, longitude: lng } = pos.coords;
+    img.addEventListener('load', function () {
+      imgContainer.append(img);
+      resolve(img);
+    });
 
-      return fetch(
-        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
-      );
-    })
-    .then(response => {
-      if (!response.ok)
-        throw new Error(`Problem with geocoding ${response.status}`);
-
-      return response.json();
-    })
-    .then(data => {
-      console.log(`You are in ${data.city}, ${data.countryName}`);
-
-      return fetch(
-        `https://countries-api-836d.onrender.com/countries/name/${data.countryName}`
-      );
-    })
-    .then(response => {
-      if (!response.ok)
-        throw new Error(`Country not found (${response.status})`);
-
-      return response.json();
-    })
-    .then(data => {
-      renderCountry(data[0]);
-    })
-    .catch(err => console.error(`${err.message}`));
+    img.addEventListener('error', function () {
+      reject(new Error('Image not found'));
+    });
+  });
 };
 
-btn.addEventListener('click', whereAmI);
+let currentImg;
 
-// Now, just imagine that you would have to handle
-// all of these asynchronous operations here
-// using callback function.
-// So that would literally be hell.
-// So therefore the name callback hell,
+createImage('img/img-1.jpg')
+  .then(img => {
+    currentImg = img;
+    console.log('Image 1 loaded');
+    return wait(2);
+  })
+  .then(() => {
+    currentImg.style.display = 'none';
 
-// but again, with this,
-// we have a really nice flat chain of promises
-// that's easy to handle and also easy to manage.
-// Now.
+    return createImage('img/img-2.jpg');
+  })
+  .then(img => {
+    currentImg = img;
+    console.log('Image 2 loaded');
+    return wait(2);
+  })
+  .then(() => {
+    currentImg.style.display = 'none';
 
-// But anyway, with this, we saw that We can really promisify
-// all kinds of asynchronous stuff in JavaScript.
-// For example, we could also promisify,
-// the old XML HTTP request function
-// that we used in the beginning to make Ajax calls,
+    return createImage('img/img-3.jpg');
+  })
+  .then(img => {
+    currentImg = img;
+    console.log('Image 3 loaded');
+    return wait(2);
+  })
+  .catch(err => console.error(err));
