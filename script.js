@@ -1702,178 +1702,387 @@ const getJson = function (url, errorMsg = 'Something went wrong') {
 // Other Promise Combinators: race, allSettled and any
 ////////////////////////////////////////////////////////////////////
 
-//==== Promise.race====
-// just like all other combinators,
-// receives an array of promises and it also returns a promise.
-// Now this promise returned by Promise.race
-// is settled as soon as one of the input promises settles.
-// And remember that settled simply means
-// that a value is available,
-// but it doesn't matter
-// if the promise got rejected or fulfilled.
-// And so in Promis.race,
-// basically the first settled promise wins the race.
+// //==== Promise.race====
+// // just like all other combinators,
+// // receives an array of promises and it also returns a promise.
+// // Now this promise returned by Promise.race
+// // is settled as soon as one of the input promises settles.
+// // And remember that settled simply means
+// // that a value is available,
+// // but it doesn't matter
+// // if the promise got rejected or fulfilled.
+// // And so in Promis.race,
+// // basically the first settled promise wins the race.
 
-(async function () {
-  const res = await Promise.race([
-    getJson(`https://countries-api-836d.onrender.com/countries/name/italy`),
-    getJson(`https://countries-api-836d.onrender.com/countries/name/egypt`),
-    getJson(`https://countries-api-836d.onrender.com/countries/name/mexico`),
-  ]);
+// (async function () {
+//   const res = await Promise.race([
+//     getJson(`https://countries-api-836d.onrender.com/countries/name/italy`),
+//     getJson(`https://countries-api-836d.onrender.com/countries/name/egypt`),
+//     getJson(`https://countries-api-836d.onrender.com/countries/name/mexico`),
+//   ]);
 
-  //   Now, if the winning promise is then a fulfilled promise,
-  // then the fulfillment value of this whole race promise
-  // is gonna be the fulfillment value of the winning promise.
+//   //   Now, if the winning promise is then a fulfilled promise,
+//   // then the fulfillment value of this whole race promise
+//   // is gonna be the fulfillment value of the winning promise.
 
-  console.log(res[0]);
+//   console.log(res[0]);
 
-  //   Okay, so again, just keep in mind
-  // that here in Promised.race,
-  // we only get one result
-  // and not an array of the results of all the three.
+//   //   Okay, so again, just keep in mind
+//   // that here in Promised.race,
+//   // we only get one result
+//   // and not an array of the results of all the three.
 
-  //   Now a promise that gets rejected
-  // can actually also win the race.
-  // And so we say that Promise.race short circuits
-  // whenever one of the promises gets settled.
-  // And so again, that means no matter if fulfilled or rejected.
-})();
+//   //   Now a promise that gets rejected
+//   // can actually also win the race.
+//   // And so we say that Promise.race short circuits
+//   // whenever one of the promises gets settled.
+//   // And so again, that means no matter if fulfilled or rejected.
+// })();
 
-// Promise.race is actually very useful
-// to prevent against never ending promises
-// or also very long running promises.
-// For example, if your user
-// has a very bad internet connection,
-// then a fetch requests in your application
-// might take way too long to actually be useful.
-// And so we can create a special time out promise,
-// which automatically rejects after a certain time has passed.
+// // Promise.race is actually very useful
+// // to prevent against never ending promises
+// // or also very long running promises.
+// // For example, if your user
+// // has a very bad internet connection,
+// // then a fetch requests in your application
+// // might take way too long to actually be useful.
+// // And so we can create a special time out promise,
+// // which automatically rejects after a certain time has passed.
 
-// So let's do that.
-// And it's gonna be similar to the wait function
-// that we created earlier.
-// But the difference is that this one is actually going
-// to reject and not going to resolve.
-// So this time let's actually pass in milliseconds, right?
-// Well, let's just pass in seconds
-// just to make it consistent with the other one.
-// So return new Promise
-// and execute a function.
-// And again, in this case, we will not resolve but reject.
-// And so here for the resolve function,
-// which is always the first one we can once again,
-// use this throw away variable.
-// So using this convention
-// and then here reject and setTimeout
-// and here we specify a callback function.
-// And so we say that after a certain amount of seconds,
-// let's call it sec like this actually.
-// So after this time has passed, we reject the promise.
-// So we create a new error
-// saying, "Requests took too long."
+// // So let's do that.
+// // And it's gonna be similar to the wait function
+// // that we created earlier.
+// // But the difference is that this one is actually going
+// // to reject and not going to resolve.
+// // So this time let's actually pass in milliseconds, right?
+// // Well, let's just pass in seconds
+// // just to make it consistent with the other one.
+// // So return new Promise
+// // and execute a function.
+// // And again, in this case, we will not resolve but reject.
+// // And so here for the resolve function,
+// // which is always the first one we can once again,
+// // use this throw away variable.
+// // So using this convention
+// // and then here reject and setTimeout
+// // and here we specify a callback function.
+// // And so we say that after a certain amount of seconds,
+// // let's call it sec like this actually.
+// // So after this time has passed, we reject the promise.
+// // So we create a new error
+// // saying, "Requests took too long."
 
-const timeout = function (sec) {
-  return new Promise((_, reject) => {
-    setTimeout(function () {
-      reject(new Error('Request took too long!'));
-    }, sec * 1000);
+// const timeout = function (sec) {
+//   return new Promise((_, reject) => {
+//     setTimeout(function () {
+//       reject(new Error('Request took too long!'));
+//     }, sec * 1000);
+//   });
+// };
+
+// // And so now we can simply have the Ajax call
+
+// Promise.race([
+//   getJson(`https://countries-api-836d.onrender.com/countries/name/tanzania`),
+//   timeout(2),
+// ])
+//   .then(res => console.log(res[0]))
+//   .catch(err => console.error(err));
+
+// // Promise.race and Promise.all
+// // are by far the two most important promise combinators.
+
+// ///====== Promise.allSettled ======
+// // And this one is a pretty new one.
+// // It is from ES2020 and it is actually a very simple one.
+// // So it takes in an array of promises again,
+// // and it will simply return an array
+// // of all the settled promises.
+// // And so again, no matter if the promises got rejected or not.
+// // So it's similar to Promise.all
+// // in regard that it also returns an array of all the results,
+// // but the difference is that Promise.all
+// // will short circuit as soon as one promise rejects,
+// // but Promise.allSettled, simply never short circuits.
+// // So it will simply return
+// // all the results of all the promises.
+
+// Promise.allSettled([
+//   //   So I will simply fake promises
+//   // by saying Promise.resolve
+//   // Success, all right.
+//   // And so you already know that this here automatically creates
+//   // a promise that is resolved.
+//   // And so we don't have to wait for anything to finish
+//   Promise.resolve('Success'),
+//   Promise.reject('ERROR'),
+//   Promise.resolve('Another success'),
+
+//   //   Now here we want actually all of the results.
+//   // And so indeed here we get three results,
+//   // even though one of them rejected, okay?
+//   // So this is the result of the three promises
+//   // and yeah, so this is how they look like
+//   // when we do them manually with resolve, reject and resolve.
+// ]).then(res => console.log(res));
+
+// // Just contrast that with Promise.all,
+// // so that would then look different.
+// // So here we would get an error
+// Promise.all([
+//   Promise.resolve('Success'),
+//   Promise.reject('ERROR'),
+//   Promise.resolve('Another success'),
+// ])
+//   .then(res => console.log(res))
+//   .catch(err => console.error(err));
+
+// //   And so here we will simply get error and that's again...
+// // Because the .allpromise combinator will short circuit
+// // if there is one error, if there is one rejected promise.
+// // So that's the difference between these two.
+
+// //======= Promise.any [ES2021]=========
+// // Now Promise.any is even more modern.
+// // It is ES2021 and actually at the time of recording,
+// // this one doesn't work in my browser,
+// // but probably by the time I'm releasing this course,
+// // it will work in the latest version of Google Chrome.
+// Promise.any([
+//   Promise.resolve('Success'),
+//   Promise.reject('ERROR'),
+//   Promise.resolve('Another success'),
+// ])
+//   .then(res => console.log(res))
+//   .catch(err => console.error(err));
+
+// //   So as always Promise.any takes in an array
+// // of multiple promises and this one will then return
+// // the first fulfilled promise
+// // and it will simply ignore rejected promises.
+// // So basically Promise.any is very similar
+// // to Promise.race with the difference
+// // that rejected promises are ignored.
+// // And so therefore the results of Promise.any
+// // is always gonna be a fulfilled promise,
+// // unless of course all of them reject, okay.
+// // But at the time you're watching this video
+// // again, this should already work.
+// // And then maybe you can experiment a little bit with this
+// // to see the difference between
+// // all the four Promise combinators.
+
+// // And again, the most important ones
+// // are definitely
+// // Promise.all and
+// // Promise.race.
+// // So keep at least these two in mind for your own projects.
+
+/////////////////////////////////////////////////////////////////////
+// Coding Challenge #3
+/////////////////////////////////////////////////////////////////////
+// Your tasks:
+
+// PART 1
+
+// 1. Write an async function 'loadNPause' that recreates Challenge #2, this time
+// using async/await (only the part where the promise is consumed, reuse the
+// 'createImage' function from before)
+
+// 2. Compare the two versions, think about the big differences, and see which one
+// you like more
+
+// 3. Don't forget to test the error handler, and to set the network speed to “Fast 3G”
+// in the dev tools Network tab
+
+// PART 2
+
+// 1. Create an async function 'loadAll' that receives an array of image paths
+// 'imgArr'
+
+// 2. Use .map to loop over the array, to load all the images with the
+// 'createImage' function (call the resulting array 'imgs')
+
+// 3. Check out the 'imgs' array in the console! Is it like you expected?
+
+// 4. Use a promise combinator function to actually get the images from the array �
+
+// 5. Add the 'parallel' class to all the images (it has some CSS styles)
+
+// Test data Part 2: ['img/img-1.jpg', 'img/img-2.jpg', 'img/img3.jpg']. To test, turn off the 'loadNPause' function
+
+// GOOD LUCK �
+
+const wait = function (seconds) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, seconds * 1000);
   });
 };
 
-// And so now we can simply have the Ajax call
+const imgContainer = document.querySelector('.images');
 
-Promise.race([
-  getJson(`https://countries-api-836d.onrender.com/countries/name/tanzania`),
-  timeout(2),
-])
-  .then(res => console.log(res[0]))
-  .catch(err => console.error(err));
+const createImage = function (imgPath) {
+  return new Promise(function (resolve, reject) {
+    const img = document.createElement('img');
+    img.src = imgPath;
 
-// Promise.race and Promise.all
-// are by far the two most important promise combinators.
+    img.addEventListener('load', function () {
+      imgContainer.append(img);
+      resolve(img);
+    });
 
-///====== Promise.allSettled ======
-// And this one is a pretty new one.
-// It is from ES2020 and it is actually a very simple one.
-// So it takes in an array of promises again,
-// and it will simply return an array
-// of all the settled promises.
-// And so again, no matter if the promises got rejected or not.
-// So it's similar to Promise.all
-// in regard that it also returns an array of all the results,
-// but the difference is that Promise.all
-// will short circuit as soon as one promise rejects,
-// but Promise.allSettled, simply never short circuits.
-// So it will simply return
-// all the results of all the promises.
+    img.addEventListener('error', function () {
+      reject(new Error('Image not found'));
+    });
+  });
+};
 
-Promise.allSettled([
-  //   So I will simply fake promises
-  // by saying Promise.resolve
-  // Success, all right.
-  // And so you already know that this here automatically creates
-  // a promise that is resolved.
-  // And so we don't have to wait for anything to finish
-  Promise.resolve('Success'),
-  Promise.reject('ERROR'),
-  Promise.resolve('Another success'),
+// let currentImg;
 
-  //   Now here we want actually all of the results.
-  // And so indeed here we get three results,
-  // even though one of them rejected, okay?
-  // So this is the result of the three promises
-  // and yeah, so this is how they look like
-  // when we do them manually with resolve, reject and resolve.
-]).then(res => console.log(res));
+// createImage('img/img-1.jpg')
+//   .then(img => {
+//     currentImg = img;
+//     console.log('Image 1 loaded');
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImg.style.display = 'none';
 
-// Just contrast that with Promise.all,
-// so that would then look different.
-// So here we would get an error
-Promise.all([
-  Promise.resolve('Success'),
-  Promise.reject('ERROR'),
-  Promise.resolve('Another success'),
-])
-  .then(res => console.log(res))
-  .catch(err => console.error(err));
+//     return createImage('img/img-2.jpg');
+//   })
+//   .then(img => {
+//     currentImg = img;
+//     console.log('Image 2 loaded');
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImg.style.display = 'none';
 
-//   And so here we will simply get error and that's again...
-// Because the .allpromise combinator will short circuit
-// if there is one error, if there is one rejected promise.
-// So that's the difference between these two.
+//     return createImage('img/img-3.jpg');
+//   })
+//   .then(img => {
+//     currentImg = img;
+//     console.log('Image 3 loaded');
+//     return wait(2);
+//   })
+//   .catch(err => console.error(err));
 
-//======= Promise.any [ES2021]=========
-// Now Promise.any is even more modern.
-// It is ES2021 and actually at the time of recording,
-// this one doesn't work in my browser,
-// but probably by the time I'm releasing this course,
-// it will work in the latest version of Google Chrome.
-Promise.any([
-  Promise.resolve('Success'),
-  Promise.reject('ERROR'),
-  Promise.resolve('Another success'),
-])
-  .then(res => console.log(res))
-  .catch(err => console.error(err));
+const loadNPause = async function () {
+  try {
+    // Load image 1
+    let img = await createImage('img/img-1.jpg');
+    console.log('Image 1 loaded');
+    await wait(2);
+    img.style.display = 'none';
 
-//   So as always Promise.any takes in an array
-// of multiple promises and this one will then return
-// the first fulfilled promise
-// and it will simply ignore rejected promises.
-// So basically Promise.any is very similar
-// to Promise.race with the difference
-// that rejected promises are ignored.
-// And so therefore the results of Promise.any
-// is always gonna be a fulfilled promise,
-// unless of course all of them reject, okay.
-// But at the time you're watching this video
-// again, this should already work.
-// And then maybe you can experiment a little bit with this
-// to see the difference between
-// all the four Promise combinators.
+    // Load image 2
+    img = await createImage('img/img-2.jpg');
+    console.log('Image 2 loaded');
+    await wait(2);
+    img.style.display = 'none';
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-// And again, the most important ones
-// are definitely
-// Promise.all and
-// Promise.race.
-// So keep at least these two in mind for your own projects.
+// loadNPause();
+
+// Part 2
+const loadAll = async function (imgArr) {
+  try {
+    const imgs = imgArr.map(async img => await createImage(img));
+    console.log(imgs);
+    //     So we have an array of promises
+    // and not the images themselves.
+    // And this is actually a big source of confusion
+    // for most async/await beginners.
+    // And I actually remember really well
+    // when I first stumbled upon this problem
+    // and didn't really understand why this was happening.
+    // However, with all the knowledge
+    // that you just learned in the section,
+    // if we really think about is
+    // then it might actually make sense.
+    // So, here we have an async function, right?
+    // And this is an arrow function.
+    // So we have an implicit return.
+    // So this is like returning something
+    // from this callback function in each iteration, right?
+
+    // However, as we already know,
+    // an async function will always return a promise
+    // and not really the value that we're interested in, right?
+    // Instead, the value that we want to return
+    // is going to be the fulfilled value of the promise
+    // that the async function returns.
+    // Remember that?
+    // And so that is exactly what is happening here,
+    // but it is happening simply three times.
+    // So we are returning something three times
+    // from an async function here,
+    // and so therefore the result will be three promises, okay?
+    // So just like it happened in that lecture
+    // where we attempted to return a string
+    // from one of the functions, remember that?
+    // So here it is indeed the exact same situation.
+    // So again, we end up with this array of promises,
+    // okay?
+    // But of course behind the scenes,
+    // the images are already being loaded,
+    // and so we're basically fine.
+    // So all we need to do now is to get
+    // these image elements themselves out of the promise.
+    // So how can we do that?
+    // Well, we could take each promise out of the array
+    // and then manually await it,
+    // but that wouldn't make much sense.
+    // First because we would have additional work
+    // and second, because then that work
+    // would not be happening in parallel, right?
+
+    // But we want it to be happening in parallel
+    // and therefore we can use Promise.all.
+    // So Promise.all is perfect for this
+    // because it already expects an array of images.
+    // And so this images array is already perfect
+    // to handle by dysfunction,
+    // right?
+    // And so now we simply need to
+    // store the image elements here.
+    // So let's call it that into this array.
+    // So let's then take a look at that.
+    // And so now this is of course going to take some time.
+    // So this can only happen once the images are actually loaded.
+    // And so now indeed, here we go.
+    // Alright?
+    // So here are the three image elements and they're now hidden
+    // and so that's why we need to add the parallel class later.
+    // So, again this worked because here in this loop,
+    // of course, the await keyword did its job
+    // of pausing the execution of the function, right?
+    // And so therefore only after that,
+    // we did then Promise.all to actually get
+    // the image elements out of the promises array.
+    // So this was a bit tricky
+    // but maybe you did figure out that
+    // this is how you solve this problem.
+
+    // So once you need to use async await
+    // in a map method like this,
+    // which believe me is pretty common,
+    // then you end up with an array of promises
+    // that you can then as a next step handle like this.
+    // So with the Promise.all combinator function.
+    const imgsEl = await Promise.all(imgs);
+    console.log(imgsEl);
+
+    //     And so now what the next step is actually pretty easy.
+    // All they have to do is to loop over this array
+    // and add the parallel class to it.
+    imgsEl.forEach(img => img.classList.add('parallel'));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+loadAll(['img/img-1.jpg', 'img/img-2.jpg', 'img/img-3.jpg']);
